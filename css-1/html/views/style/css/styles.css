@@ -1,0 +1,30 @@
+:root{
+	--myGreen: rgb(0, 149, 62);
+}
+
+.table_inner_header {
+	text-align: center;
+}
+table {
+	margin-bottom: 10px;
+}
+
+td a, td img {
+	display: block;
+}
+
+ul li:last-child {
+	font-size: 2em;
+	background-color: red;
+}
+
+h1 {
+	width:fit-content;
+	margin: auto;
+	background-color: rgb(255, 0, 0);
+	box-shadow: 5px 5px 10px hsl(0, 100%, 20%);
+	
+}
+h1:hover{
+	background-color: var(--myGreen);
+}

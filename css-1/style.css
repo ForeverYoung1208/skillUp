@@ -1,0 +1,121 @@
+/* body */
+??? {
+    background-color: lightblue;
+}
+
+/* Все <h2> */
+??? {
+    text-decoration: underline;
+}
+
+/* Все <h3> */
+??? {
+    text-decoration: line-through;
+}
+
+/* Только <h2> с текстом "Contacts" и "Gallery" */
+??? {
+    color: greenyellow;
+}
+
+/* Все <p> */
+??? {
+    font-style: italic;
+}
+
+/* Только последний <p> секции "About us" */
+??? {
+    color: white;
+}
+
+/* Все <b> */
+??? {
+    font-size: 18px;
+    color: lightseagreen;
+}
+
+/* Каждый 2-й <b> в <p> секции "About us" */
+??? {
+    color: red;
+}
+
+/* Все <a> */
+??? {
+    letter-spacing: 3px;
+}
+
+/* Только <a> секции "Contacts" с номером (073) */
+??? {
+    background-color: orange;
+}
+
+/* Все <img> */
+??? {
+    border: 4px inset darkorchid;
+}
+
+/* Только <img>, на которых изображены люди */
+??? {
+    border-radius: 50%;
+}
+
+/* Только <img>, на которых изображены мужчины */
+??? {
+    transform: scale(.7);
+}
+
+/* Только <img>, на которых изображены женщины */
+??? {
+    opacity: .5;
+}
+
+/* Только <img> со вторым по счёту мужчиной */
+??? {
+    border: 15px dashed orange;
+}
+
+/* <table>, все <th> и <td> */
+??? {
+    border: 1px solid black;
+}
+
+/* Все <th> */
+??? {
+    color: darkblue;
+    text-align: center;
+}
+
+/* Только <th> в <tbody> */
+??? {
+    font-size: 25px;
+}
+
+/* Только <th> и <td>, у которых есть атрибуты "rowspan", "colspan" */
+??? {
+    font-style: italic;
+}
+
+/* Все <input>, кроме "кнопки" */
+??? {
+    display: block;
+}
+
+/* Все <input>, кроме "кнопки", "radio" и "checkbox" */
+??? {
+    border: 2px solid aqua;
+}
+
+/* Все <b> секции "Follow us" */
+??? {
+    color: purple;
+}
+
+/* Кнопка для отправки данных */
+??? {
+    background-color: lightgreen;
+}
+
+/* Только <h3> секции "Follow us" */
+??? {
+    text-transform: uppercase;
+}
