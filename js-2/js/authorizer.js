@@ -15,7 +15,7 @@ c)Просмотреть список всех пользователей
 d)Изменить данные пользователя
 q)Выйти `;
 
-var doNextSelection = true;
+var doNextChoise = true;
 var userChoise;
 
 function logUserData(user) {
@@ -103,7 +103,7 @@ alert('Hi!')
 
 var allUsers = [];
 
-while (doNextSelection) {
+while (doNextChoise) {
   userChoise = prompt(optionsText);
   switch (userChoise) {
 		case 'a':
@@ -122,7 +122,7 @@ while (doNextSelection) {
 			allUsers = changeUsers(allUsers);
 			break;
 		case 'q':
-			doNextSelection = false;			
+			doNextChoise = false;			
 			break;
 		
 		default:
@@ -130,10 +130,10 @@ while (doNextSelection) {
       break;
 	}
 	
-	if (doNextSelection){
+	if (doNextChoise){
 		confirm('Do you want to continue?') 
 			? null 
-			: doNextSelection=false
+			: doNextChoise=false
 	}
   
 }
