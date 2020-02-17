@@ -19,15 +19,15 @@ var doNextChoise = true;
 var userChoise;
 
 function logUserData(user) {
-	USER_ATTRIBUTES.forEach( attr => 
-		console.log(`[${attr.key}]:`,user[attr.key] )
+	Object.keys(user).forEach( key => 
+		console.log(`[${key}]:`,user[key] )
 	)
 	console.log('------------');
 }
 
-function askNewUserData() {
+function askNewUserData(attrList) {
 	var newUser = {}
-	USER_ATTRIBUTES.forEach( (attr)=>
+	attrList.forEach( (attr)=>
 		newUser[attr.key]=prompt('Enter ' + attr.name + ':')
 	)	
 	return newUser;
@@ -36,7 +36,7 @@ function askNewUserData() {
 //----------------------------------------------------------------
 
 function signUp(){
-	var newUser = askNewUserData();
+	var newUser = askNewUserData(USER_ATTRIBUTES);
 	console.log('--- User created:');
 	console.log('[newUser.name]', newUser.name);
 	console.log('[newUser.familyName]', newUser.familyName);
@@ -82,7 +82,7 @@ function changeUsers(usersList) {
 	var userToModify = usersList.find(user => user.name === enteredName)
 	if (userToModify){
 		var newUsersList = usersList.map( user =>{
-			user.name === enteredName ? user = askNewUserData() : null
+			user.name === enteredName ? user = askNewUserData(USER_ATTRIBUTES) : null
 			return user
 		})
 	} else {		
