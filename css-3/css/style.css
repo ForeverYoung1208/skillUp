@@ -1,1 +1,111 @@
-/* Good Luck! */
+* {
+margin: 0;
+bottom: 0;
+box-sizing: border-box;
+font-family: Arial, Helvetica, sans-serif;
+}
+
+header, .browsers, footer{
+  min-width: 200px;
+}
+
+header, footer{
+  min-height: 4rem;
+  background-image: linear-gradient(to bottom, blue, rgb(0, 0, 121) );
+  color: white;
+  text-align: center;
+  padding: 10px;
+}
+
+footer a{
+  color: white;
+}
+
+footer ul {
+  padding-top: 1rem;
+  list-style: none;
+  padding-inline-start: 0px;
+}
+
+footer li{
+  display: inline-block;
+  margin-right: 1rem;
+
+}
+footer li:last-child{
+  margin-right: 0;
+}
+
+
+h1{
+  font-size: 1.5rem;
+}
+
+.browsers{
+  padding: 15px;
+}
+
+.browser{
+  background-image: linear-gradient(to bottom, #eee, #ccc);
+  padding: 20px;
+  margin-bottom: 10px;
+  box-shadow: 0px 3px 3px hsl(0, 0%, 0%);
+  min-height: 320px;
+
+}
+
+.content h2{
+  font-size: 1rem;
+  text-align: center;
+  color: hsl(0, 100%, 25%);
+  text-shadow: hsl(0, 100%, 5%) 0px 2px 3px ;
+  display: inline-block;
+  width: 100%;
+  margin: 0 auto 10px;
+}
+
+.content .img{
+  max-width: 40%;
+  float: left;
+  margin-right: 1rem;
+}
+
+.img img{
+  width:100%;
+  border: inset 3px hsl(0, 0%, 30%);
+}
+
+.content p{
+  font-size: 0.7rem;
+  margin-bottom: 20px;
+  line-height:150%;
+
+}
+
+.control{
+  width:100%
+}
+.control button{
+  display: block;
+  margin: 0 auto;
+  padding: 0.2rem 1rem;
+  font-size: 0.8rem;  
+  border: none;
+  border-radius: 2px;
+  background-color: hsl(240, 100%, 27%);
+  color: white;
+  box-shadow: 0 2px 3px hsl(240, 100%, 7%);
+}
+
+@media (max-width: 1200px){
+  .browsers{
+    max-width: 50%;
+  }
+}
+
+
+@media (max-width: 900px){
+  .browsers{
+    max-width: 900px;
+  }
+}
