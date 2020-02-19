@@ -104,8 +104,15 @@ h1 {
   background-color: hsl(240, 100%, 27%);
   color: white;
   box-shadow: 0 2px 3px hsl(240, 100%, 7%);
-}
+  cursor: pointer;
+  transition: ease-in-out 100ms;
 
+}
+.control button:hover {
+  background-color: hsl(240, 100%, 57%);
+  box-shadow: 0 5px 4px hsl(240, 100%, 7%);
+
+}
 
 
 @media (min-width: 900px) {
