@@ -5,11 +5,11 @@ box-sizing: border-box;
 font-family: Arial, Helvetica, sans-serif;
 }
 
-header, .browsers, footer{
+header, .browsers, footer {
   min-width: 200px;
 }
 
-header, footer{
+header, footer {
   min-height: 4rem;
   background-image: linear-gradient(to bottom, blue, rgb(0, 0, 121) );
   color: white;
@@ -17,7 +17,7 @@ header, footer{
   padding: 10px;
 }
 
-footer a{
+footer a {
   color: white;
 }
 
@@ -27,34 +27,39 @@ footer ul {
   padding-inline-start: 0px;
 }
 
-footer li{
+footer li {
   display: inline-block;
   margin-right: 1rem;
 
 }
-footer li:last-child{
+footer li:last-child {
   margin-right: 0;
 }
 
 
-h1{
+h1 {
   font-size: 1.5rem;
 }
 
-.browsers{
+.browsers {
   padding: 15px;
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0 auto;
 }
 
-.browser{
+.browser {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
   background-image: linear-gradient(to bottom, #eee, #ccc);
   padding: 20px;
-  margin-bottom: 10px;
+  margin: 0 5px 10px 5px;
   box-shadow: 0px 3px 3px hsl(0, 0%, 0%);
-  min-height: 320px;
-
 }
 
-.content h2{
+.content h2 {
   font-size: 1rem;
   text-align: center;
   color: hsl(0, 100%, 25%);
@@ -64,28 +69,32 @@ h1{
   margin: 0 auto 10px;
 }
 
-.content .img{
-  max-width: 40%;
+.content .img {
+  max-width: 100px;
   float: left;
   margin-right: 1rem;
 }
 
-.img img{
+.img img {
   width:100%;
   border: inset 3px hsl(0, 0%, 30%);
+  animation: browserPicRotate 1000ms linear 1;
 }
 
-.content p{
+.content p {
   font-size: 0.7rem;
   margin-bottom: 20px;
   line-height:150%;
 
 }
 
-.control{
-  width:100%
+.control {
+  width:100%;
+  height: fit-content;
+  position: relative;
+  bottom: 0;
 }
-.control button{
+.control button {
   display: block;
   margin: 0 auto;
   padding: 0.2rem 1rem;
@@ -97,15 +106,33 @@ h1{
   box-shadow: 0 2px 3px hsl(240, 100%, 7%);
 }
 
-@media (max-width: 1200px){
-  .browsers{
-    max-width: 50%;
+
+
+@media (min-width: 900px) {
+  .browser {
+    max-width: calc(50% - 10px);
   }
 }
 
 
-@media (max-width: 900px){
-  .browsers{
-    max-width: 900px;
+
+@media (min-width: 1200px) {
+  .browsers {
+    max-width: calc(100% - 2*200px);
+  }
+
+  .browser {
+    max-width: calc(100% / 3 - 30px);
   }
 }
+
+@keyframes browserPicRotate {
+  0% {
+      transform: translate(-100vw) rotate(0turn) ;
+
+  }
+  100% {
+      transform: translate(0vw) rotate(3turn) ;
+  }
+}
+
