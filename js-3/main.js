@@ -28,18 +28,21 @@ function Menu(userOptions){ //[{key:string, optionName:string, optionFn:function
 	})
 
 	var optionsText = options.reduce(function(prev, curr){
-			var str = prev + curr.key + ') '+curr.optionName+'\n';
-		return str
+		return prev + curr.key + ') '+curr.optionName+'\n';
 	},'Please select: \n' )
 
 	this.doNextChoise = true;
 
 	this.callMenu = function (){
+		var _self = this;
 		while (this.doNextChoise) {
+
 			var userChoise = prompt(optionsText);
+
 			options.forEach(function (option) {
-				option.key === userChoise ?	option.optionFn.call(this) : null
-			}.bind(this))
+				option.key === userChoise ?	option.optionFn.call(_self) : null
+			})
+
 			if (this.doNextChoise){
 				confirm('Do you want to continue?') 
 					? null 
@@ -49,20 +52,23 @@ function Menu(userOptions){ //[{key:string, optionName:string, optionFn:function
 	}
 }
 
+
 var testMenuOptions=[{
 	key: '1', 
 	optionName: 'option1', 
-	optionFn: function(){alert('option1 selected'); return true}
+	optionFn: function(){ 
+		console.log('option1');
+		
+	}
 },{
 	key: '2', 
 	optionName: 'option2', 
-	optionFn: function(){ console.log('option2 selected'); return true}
+	optionFn: function(){ 
+		console.log('option2');
+		
+	}
 }]
 
-alert('Hi!')
-
+// alert('Hi!')
 var menu1 = new Menu(testMenuOptions);
 menu1.callMenu();
-
-
-// alert('Bye-bye!')
