@@ -23,8 +23,8 @@ function Menu(userOptions){ //[{key:string, optionName:string, optionFn:function
 	var options = userOptions.slice()
 	options.push({
 		key:'q',
-		optionName:'quit',
-		optionFn: function(){ this.doNextChoise = false; }
+		optionName:'Выход из программы',
+			optionFn: function(){ this.doNextChoise = false; }
 	})
 
 	var optionsText = options.reduce(function(prev, curr){
@@ -53,20 +53,54 @@ function Menu(userOptions){ //[{key:string, optionName:string, optionFn:function
 }
 
 
+// a) Посмотреть список товаров
+// b) Установить фильтры
+// c) Сортировать товары
+// q) Выход из программы //present as default in Menu
+
+function Products(initProductList){
+	this.all = JSON.parse( initProductList, function (key,value) {
+		if (key ==='createdAt'){
+			value = new Date(value)
+		}
+		return value
+	})
+
+
+	this.list = function(){
+		var productsToDisplay = this.all.slice();
+
+		console.table(productsToDisplay)
+	}
+
+	this.setFilter = function (filterStr) {
+		//...
+	}
+
+	this.setSort
+
+
+
+}
+
+var products1 = new Products(jsonProducts)
+
 var testMenuOptions=[{
-	key: '1', 
-	optionName: 'option1', 
-	optionFn: function(){ 
-		console.log('option1');
-		
-	}
+	key: 'a', 
+	optionName: 'Посмотреть список товаров', 
+	optionFn: function(){ products1.list()}
+	
+	
 },{
-	key: '2', 
-	optionName: 'option2', 
-	optionFn: function(){ 
-		console.log('option2');
+	key: 'b', 
+	optionName: 'Установить фильтры', 
+	optionFn: function(){ }
 		
-	}
+	
+},{
+	key: 'c', 
+	optionName: 'ортировать товары', 
+	optionFn: function(){ }
 }]
 
 // alert('Hi!')
