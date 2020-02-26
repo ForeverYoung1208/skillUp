@@ -19,11 +19,11 @@ var jsonProducts = '[{"category":"TV","price":1500,"manufacturer":"Sony","create
 //===========================================================================
 
 
-function Menu(userOptions){ //[{key:string, optionName:string, optionFn:function <true> }]
+function Menu(userOptions, quitString){ //[{key:string, optionName:string, optionFn:function }, string]
 	var options = userOptions.slice()
 	options.push({
 		key:'q',
-		optionName:'Выход из программы',
+		optionName: quitString,
 			optionFn: function(){ this.doNextChoise = false; }
 	})
 
@@ -61,8 +61,19 @@ function Products(initProductList){
 		return value
 	})
 
-	// this.activeFilters = [{onField:'category', value:'TV'}] // [{onField:string, value:string}]
-	// this.activeFilters = [] // [{onField:string, value:string}]
+	// this.activeFilters = {
+	// 	category:['TV','Laptop'],
+	// 	manufacturer:['man'],
+	// 	price:{min:111, max:222},
+	// 	createdAt:{min:4444, max:5555}
+	// }
+	this.activeFilters = {
+		category:[],
+		manufacturer:[],
+		price:{min:null, max:null},
+		createdAt:{min:null, max:null}
+	}
+	
 
 	this.list = function(){
 		var _self = this
@@ -70,18 +81,21 @@ function Products(initProductList){
 		var totalQuantity = 0, totalPrice = 0, averagePrice = 0;
 
 		var productsToDisplay = this.all
-		.filter(function(product) {
-			if (!_self.activeFilters || _self.activeFilters.length<1 ) return true;
-			var isFilteredOut = true;
-			
-			_self.activeFilters.forEach(function(filterItem) {
-				Object.keys(product).forEach(function(productProp) {
-					if (productProp === filterItem.onField && product[productProp] === filterItem.value){
-						isFilteredOut = false
-					}
-				})
-			})
-			return !isFilteredOut
+		.filter(function(product) { 
+			if (!_self.activeFilters.category || _self.activeFilters.category.length<1) return true;
+			return _self.activeFilters.category.includes(product.category) 
+		})
+		.filter(function(product) { 
+			if (!_self.activeFilters.manufacturer || _self.activeFilters.manufacturer.length<1) return true;
+			return _self.activeFilters.manufacturer.includes(product.manufacturer) 
+		})
+		.filter(function(product) { 
+			if (!_self.activeFilters.price || !_self.activeFilters.price.min || !_self.activeFilters.price.max) return true;
+			return (product.price > _self.activeFilters.price.min && product.price < _self.activeFilters.price.max) 
+		})
+		.filter(function(product) { 
+			if (!_self.activeFilters.createdAt || !_self.activeFilters.createdAt.min || !_self.activeFilters.createdAt.max) return true;
+			return (product.createdAt > _self.activeFilters.createdAt.min && product.createdAt < _self.activeFilters.createdAt.max) 
 		})
 		.map(function(product) {
 			totalQuantity ++;
@@ -113,7 +127,7 @@ function Products(initProductList){
 
 }
 
-// alert('Hi!')
+//  alert('Hi!')
 
 var products1 = new Products(jsonProducts)
 var mainMenuOptions=[{
@@ -132,6 +146,6 @@ var mainMenuOptions=[{
 	optionName: 'Сортировать товары', 
 	optionFn: function(){ }
 }]
-var mainMenu = new Menu(mainMenuOptions);
+var mainMenu = new Menu(mainMenuOptions, 'Выход из программы');
 
 mainMenu.callMenu();
