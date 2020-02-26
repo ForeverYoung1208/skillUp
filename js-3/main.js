@@ -53,11 +53,6 @@ function Menu(userOptions){ //[{key:string, optionName:string, optionFn:function
 }
 
 
-// a) Посмотреть список товаров
-// b) Установить фильтры
-// c) Сортировать товары
-// q) Выход из программы //present as default in Menu
-
 function Products(initProductList){
 	this.all = JSON.parse( initProductList, function (key,value) {
 		if (key ==='createdAt'){
@@ -66,14 +61,49 @@ function Products(initProductList){
 		return value
 	})
 
+	// this.activeFilters = [{onField:'category', value:'TV'}] // [{onField:string, value:string}]
+	// this.activeFilters = [] // [{onField:string, value:string}]
 
 	this.list = function(){
-		var productsToDisplay = this.all.slice();
+		var _self = this
 
+		var totalQuantity = 0, totalPrice = 0, averagePrice = 0;
+
+		var productsToDisplay = this.all
+		.filter(function(product) {
+			if (!_self.activeFilters || _self.activeFilters.length<1 ) return true;
+			var isFilteredOut = true;
+			
+			_self.activeFilters.forEach(function(filterItem) {
+				Object.keys(product).forEach(function(productProp) {
+					if (productProp === filterItem.onField && product[productProp] === filterItem.value){
+						isFilteredOut = false
+					}
+				})
+			})
+			return !isFilteredOut
+		})
+		.map(function(product) {
+			totalQuantity ++;
+			totalPrice += product.price
+			var productToDisplay = {}
+			return Object.assign(productToDisplay, product,{createdAt: product.createdAt.toLocaleString('ru', { hour12: false })} )
+		});
+		
 		console.table(productsToDisplay)
+
+		console.log('[_self.activeFilters]', JSON.stringify(_self.activeFilters));
+		console.log('[totalQuantity]', totalQuantity);
+		console.log('[totalPrice]', totalPrice);
+		totalQuantity > 0 ? averagePrice = totalPrice/totalQuantity : averagePrice = 0 ;
+		console.log('[averagePrice]', averagePrice.toFixed(2));
 	}
 
 	this.setFilter = function (filterStr) {
+		//...
+	}
+
+	this.askFilters = function (params) {
 		//...
 	}
 
@@ -83,26 +113,25 @@ function Products(initProductList){
 
 }
 
-var products1 = new Products(jsonProducts)
+// alert('Hi!')
 
-var testMenuOptions=[{
+var products1 = new Products(jsonProducts)
+var mainMenuOptions=[{
 	key: 'a', 
 	optionName: 'Посмотреть список товаров', 
 	optionFn: function(){ products1.list()}
-	
-	
 },{
 	key: 'b', 
 	optionName: 'Установить фильтры', 
-	optionFn: function(){ }
-		
-	
+	optionFn: function(){ 
+		filters = products1.askFilters()
+		products1.setFilters() 
+	}
 },{
 	key: 'c', 
-	optionName: 'ортировать товары', 
+	optionName: 'Сортировать товары', 
 	optionFn: function(){ }
 }]
+var mainMenu = new Menu(mainMenuOptions);
 
-// alert('Hi!')
-var menu1 = new Menu(testMenuOptions);
-menu1.callMenu();
+mainMenu.callMenu();
