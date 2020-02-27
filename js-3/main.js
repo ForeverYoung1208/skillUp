@@ -19,7 +19,7 @@ var jsonProducts = '[{"category":"TV","price":1500,"manufacturer":"Sony","create
 //===========================================================================
 
 
-function Menu(userOptions, quitString){ //[{key:string, optionName:string, optionFn:function, wrongChoiseFn:function }, string]
+function Menu(userOptions, quitString, wrongChoiseFn){ //[{key:string, optionName:string, optionFn:function, wrongChoiseFn:function }, string]
 	var options = userOptions.slice()
 	options.push({
 		key:'q',
@@ -32,16 +32,23 @@ function Menu(userOptions, quitString){ //[{key:string, optionName:string, optio
 	},'Please select: \n' )
 
 	this.doNextChoise = true;
+	this.wrongChoiseFn = function(){console.log('wrong choise');}
 
 	this.callMenu = function (){
 		var _self = this;
 		while (this.doNextChoise) {
 
 			var userChoise = prompt(optionsText);
+			var isOptionFound = false;
 
 			options.forEach(function (option) {
-				option.key === userChoise ?	option.optionFn.call(_self) : this.wrongChoiseFn.call(_self)
+				if (option.key === userChoise){
+					isOptionFound = true;
+					option.optionFn.call(_self) //sets doNextChoise to fasle if "q" selected
+				}
 			})
+
+			!isOptionFound ? wrongChoiseFn(userChoise) : null
 
 		}
 		//prepare for next return to this menu
@@ -153,21 +160,19 @@ function Products(initProductList){
 	this.addCategoryFilterDialog = function(){
 		var categoryDialogOptions = []
 		var abc = 'abcdefghijklmnoprstuvwxyz'
-		var selection = ''
 		this.all.forEach(function(product,index) {
 			categoryDialogOptions.push(
 				{
 					key: abc[index],
 					optionName: product.category,
-					optionFn: function (){}
+					optionFn: function (){console.log('[abc[index]]', abc[index]);}
 				}
 			)
 			
 		})
 
-		var categoryDialog = new Menu(categoryDialogOptions, '--Back--')
-		selection = categoryDialog.callMenu();
-		console.log('[selection]', selection);
+		var categoryDialog = new Menu(categoryDialogOptions, '--Back--', function(bigSelection){console.log('[bigSelection]', bigSelection) })
+		categoryDialog.callMenu();
 				
 	}
 
@@ -221,7 +226,7 @@ var filtersMenuOptions = [{
 }]
 
 
-var mainMenu = new Menu(mainMenuOptions, 'Выход из программы');
-var filtersMenu = new Menu(filtersMenuOptions, '--Back--')
+var mainMenu = new Menu(mainMenuOptions, 'Выход из программы', function(selection){console.log('wrong choise!', selection)})
+var filtersMenu = new Menu(filtersMenuOptions, '--Back--', function(selection){console.log('wrong choise!', selection)})
 
 mainMenu.callMenu();
