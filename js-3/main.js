@@ -19,12 +19,12 @@ var jsonProducts = '[{"category":"TV","price":1500,"manufacturer":"Sony","create
 //===========================================================================
 
 
-function Menu(userOptions, quitString){ //[{key:string, optionName:string, optionFn:function }, string]
+function Menu(userOptions, quitString){ //[{key:string, optionName:string, optionFn:function, wrongChoiseFn:function }, string]
 	var options = userOptions.slice()
 	options.push({
 		key:'q',
 		optionName: quitString,
-			optionFn: function(){ this.doNextChoise = false; }
+		optionFn: function(){ this.doNextChoise = false; },
 	})
 
 	var optionsText = options.reduce(function(prev, curr){
@@ -40,22 +40,17 @@ function Menu(userOptions, quitString){ //[{key:string, optionName:string, optio
 			var userChoise = prompt(optionsText);
 
 			options.forEach(function (option) {
-				option.key === userChoise ?	option.optionFn.call(_self) : null
+				option.key === userChoise ?	option.optionFn.call(_self) : this.wrongChoiseFn.call(_self)
 			})
 
-			if (this.doNextChoise){
-				confirm('Do you want to continue?') 
-					? null 
-					: this.doNextChoise=false
-			}
 		}
+		//prepare for next return to this menu
+		this.doNextChoise = true;
 	}
 }
 
-
-
-
 function Filters(initFilters){
+	
 	function isIncludes(inArray, thing) {
 		if (!inArray || inArray.length<1) return true;
 		if (inArray.includes(thing)) return true;
@@ -67,15 +62,23 @@ function Filters(initFilters){
 		if (thing>min && thing<max) return true;
 		return false
 	}
-	this.category = initFilters.category;
-	this.manufacturer = initFilters.manufacturer;
-	this.price = initFilters.price;
-	this.createdAt = initFilters.createdAt;
+
+	this.applyFilters = function(filters){
+		this.category = filters.category;
+		this.manufacturer = filters.manufacturer;
+		this.price = filters.price;
+		this.createdAt = filters.createdAt;
+	}.bind(this)
+
+	this.applyFilters(initFilters)
+
+
 
 	var categoryPasses = isIncludes;
 	var manufacturerPasses = isIncludes;
 	var pricePasses = isInMinMax;
 	var createdAtPasses = isInMinMax;
+
 
 	this.testProduct = function(product){
 		var isFilteredOut = false
@@ -104,18 +107,20 @@ function Products(initProductList){
 		return value
 	})
 
-	// var testFilters = {
-	// 	category:['TV','Laptop'],
-	// 	manufacturer:['man'],
-	// 	price:{min:111, max:222},
-	// 	createdAt:{min:4444, max:5555}
-	// }
+
 	var testFilters = {
 		category:['TV', 'Laptop'],
 		manufacturer:[],
 		price:{min:1150, max:1250},
 		createdAt:{}
 	}
+	var emptyFilters = {
+		category:[],
+		manufacturer:[],
+		price:{},
+		createdAt:{}
+	}
+
 
 	this.activeFilters = new Filters( testFilters );
 	
@@ -141,23 +146,40 @@ function Products(initProductList){
 		console.log('[averagePrice]', averagePrice.toFixed(2));
 	}
 
-	this.setFilter = function (filterStr) {
-		//...
+	this.askFilters = function () {
+		filtersMenu.callMenu()
 	}
 
-	this.askFilters = function (params) {
-		//...
+	this.addCategoryFilterDialog = function(){
+		var categoryDialogOptions = []
+		var abc = 'abcdefghijklmnoprstuvwxyz'
+		var selection = ''
+		this.all.forEach(function(product,index) {
+			categoryDialogOptions.push(
+				{
+					key: abc[index],
+					optionName: product.category,
+					optionFn: function (){}
+				}
+			)
+			
+		})
+
+		var categoryDialog = new Menu(categoryDialogOptions, '--Back--')
+		selection = categoryDialog.callMenu();
+		console.log('[selection]', selection);
+				
 	}
 
-	this.setSort
-
-
-
+	this.clearFilters = function () {
+		this.activeFilters.applyFilters(emptyFilters)
+		console.log('[this.activeFilters]', JSON.stringify(this.activeFilters));
+	}
+	
 }
 
-//  alert('Hi!')
-
 var products1 = new Products(jsonProducts)
+
 var mainMenuOptions=[{
 	key: 'a', 
 	optionName: 'Посмотреть список товаров', 
@@ -166,14 +188,40 @@ var mainMenuOptions=[{
 	key: 'b', 
 	optionName: 'Установить фильтры', 
 	optionFn: function(){ 
-		filters = products1.askFilters()
-		products1.setFilters() 
+		var filters = products1.askFilters()
 	}
 },{
 	key: 'c', 
 	optionName: 'Сортировать товары', 
 	optionFn: function(){ }
 }]
+
+var filtersMenuOptions = [{
+	key: 'a', 
+	optionName: 'категория', 
+	optionFn: function(){ products1.addCategoryFilterDialog('category');}
+},{
+	key: 'b', 
+	optionName: 'цена', 
+	optionFn: function(){ products1.addFilterDialog('price');}
+},{
+	key: 'c', 
+	optionName: 'производитель', 
+	optionFn: function(){ products1.addFilterDialog('manufacturer');}
+
+},{
+	key: 'd', 
+	optionName: 'дата изготовления', 
+	optionFn: function(){ products1.addFilterDialog('createdAt');}
+
+},{
+	key: 'e', 
+	optionName: 'сброс фильтров', 
+	optionFn: function(){ products1.clearFilters();}
+}]
+
+
 var mainMenu = new Menu(mainMenuOptions, 'Выход из программы');
+var filtersMenu = new Menu(filtersMenuOptions, '--Back--')
 
 mainMenu.callMenu();
