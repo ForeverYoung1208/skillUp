@@ -52,6 +52,48 @@ function Menu(userOptions, quitString){ //[{key:string, optionName:string, optio
 	}
 }
 
+function isIncludes(inArray, thing) {
+	if (!inArray || inArray.length<1) return true;
+	if (inArray.includes(thing)) return true;
+	return false
+}
+
+function isInMinMax(min, max, thing){
+	if (!min || !max) return true;
+	if (thing>min && thing<max) return true;
+	return false
+}
+
+
+function Filters(initFilters){
+	this.category = initFilters.category;
+	this.manufacturer = initFilters.manufacturer;
+	this.price = initFilters.price;
+	this.createdAt = initFilters.createdAt;
+
+	var categoryPasses = isIncludes;
+	var manufacturerPasses = isIncludes;
+	var pricePasses = isInMinMax;
+	var createdAtPasses = isInMinMax;
+
+	this.testProduct = function(product){
+		var isFilteredOut = false
+
+		if ( !categoryPasses(this.category, product.category) )
+			{isFilteredOut = true};
+
+		if ( !manufacturerPasses(this.manufacturer, product.manufacturer) )
+			{isFilteredOut = true};
+
+		if( !pricePasses(this.price, product.price) )
+			{isFilteredOut = true};
+
+		if( !createdAtPasses(this.createdAt, product.createdAt) )
+			{isFilteredOut = true};		
+
+		return isFilteredOut
+	}.bind(this)
+}
 
 function Products(initProductList){
 	this.all = JSON.parse( initProductList, function (key,value) {
@@ -61,18 +103,20 @@ function Products(initProductList){
 		return value
 	})
 
-	// this.activeFilters = {
+	// var testFilters = {
 	// 	category:['TV','Laptop'],
 	// 	manufacturer:['man'],
 	// 	price:{min:111, max:222},
 	// 	createdAt:{min:4444, max:5555}
 	// }
-	this.activeFilters = {
+	var testFilters = {
 		category:[],
 		manufacturer:[],
-		price:{min:null, max:null},
-		createdAt:{min:null, max:null}
+		price:{min:100, max:600},
+		createdAt:{}
 	}
+
+	this.activeFilters = new Filters( testFilters );
 	
 
 	this.list = function(){
@@ -81,22 +125,7 @@ function Products(initProductList){
 		var totalQuantity = 0, totalPrice = 0, averagePrice = 0;
 
 		var productsToDisplay = this.all
-		.filter(function(product) { 
-			if (!_self.activeFilters.category || _self.activeFilters.category.length<1) return true;
-			return _self.activeFilters.category.includes(product.category) 
-		})
-		.filter(function(product) { 
-			if (!_self.activeFilters.manufacturer || _self.activeFilters.manufacturer.length<1) return true;
-			return _self.activeFilters.manufacturer.includes(product.manufacturer) 
-		})
-		.filter(function(product) { 
-			if (!_self.activeFilters.price || !_self.activeFilters.price.min || !_self.activeFilters.price.max) return true;
-			return (product.price > _self.activeFilters.price.min && product.price < _self.activeFilters.price.max) 
-		})
-		.filter(function(product) { 
-			if (!_self.activeFilters.createdAt || !_self.activeFilters.createdAt.min || !_self.activeFilters.createdAt.max) return true;
-			return (product.createdAt > _self.activeFilters.createdAt.min && product.createdAt < _self.activeFilters.createdAt.max) 
-		})
+		.filter(this.activeFilters.testProduct)
 		.map(function(product) {
 			totalQuantity ++;
 			totalPrice += product.price
