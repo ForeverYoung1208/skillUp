@@ -85,13 +85,13 @@ function Filters(initFilters){
 		if ( !manufacturerPasses(this.manufacturer, product.manufacturer) )
 			{isFilteredOut = true};
 
-		if( !pricePasses(this.price, product.price) )
+		if( !pricePasses(this.price.min, this.price.max, product.price) )
 			{isFilteredOut = true};
 
-		if( !createdAtPasses(this.createdAt, product.createdAt) )
+		if( !createdAtPasses(this.createdAt.min, this.createdAt.max, product.createdAt) )
 			{isFilteredOut = true};		
 
-		return isFilteredOut
+		return !isFilteredOut
 	}.bind(this)
 }
 
@@ -110,17 +110,15 @@ function Products(initProductList){
 	// 	createdAt:{min:4444, max:5555}
 	// }
 	var testFilters = {
-		category:[],
+		category:['TV', 'Laptop'],
 		manufacturer:[],
-		price:{min:100, max:600},
+		price:{},
 		createdAt:{}
 	}
 
 	this.activeFilters = new Filters( testFilters );
 	
-
 	this.list = function(){
-		var _self = this
 
 		var totalQuantity = 0, totalPrice = 0, averagePrice = 0;
 
@@ -135,7 +133,7 @@ function Products(initProductList){
 		
 		console.table(productsToDisplay)
 
-		console.log('[_self.activeFilters]', JSON.stringify(_self.activeFilters));
+		console.log('[this.activeFilters]', JSON.stringify(this.activeFilters));
 		console.log('[totalQuantity]', totalQuantity);
 		console.log('[totalPrice]', totalPrice);
 		totalQuantity > 0 ? averagePrice = totalPrice/totalQuantity : averagePrice = 0 ;
