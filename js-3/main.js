@@ -52,20 +52,21 @@ function Menu(userOptions, quitString){ //[{key:string, optionName:string, optio
 	}
 }
 
-function isIncludes(inArray, thing) {
-	if (!inArray || inArray.length<1) return true;
-	if (inArray.includes(thing)) return true;
-	return false
-}
 
-function isInMinMax(min, max, thing){
-	if (!min || !max) return true;
-	if (thing>min && thing<max) return true;
-	return false
-}
 
 
 function Filters(initFilters){
+	function isIncludes(inArray, thing) {
+		if (!inArray || inArray.length<1) return true;
+		if (inArray.includes(thing)) return true;
+		return false
+	}
+
+	function isInMinMax(min, max, thing){
+		if (!min || !max) return true;
+		if (thing>min && thing<max) return true;
+		return false
+	}
 	this.category = initFilters.category;
 	this.manufacturer = initFilters.manufacturer;
 	this.price = initFilters.price;
@@ -112,7 +113,7 @@ function Products(initProductList){
 	var testFilters = {
 		category:['TV', 'Laptop'],
 		manufacturer:[],
-		price:{},
+		price:{min:1150, max:1250},
 		createdAt:{}
 	}
 
