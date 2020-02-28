@@ -79,7 +79,7 @@ function Filters(initFilters){
 
 	this.applyFilters(initFilters)
 
-	this.addCateoriesFilter(filters){
+	this.addCateoriesFilter = function(categoryFilters){
 
 	}
 
@@ -162,6 +162,8 @@ function Products(initProductList){
 		filtersMenu.callMenu()
 	}
 
+
+	//// TODO maybe, transfer to 'Filters' class !!!!
 	this.addCategoryFilterDialog = function(){
 		var categoryDialogOptions = []
 		var abc = 'abcdefghijklmnoprstuvwxyz'
