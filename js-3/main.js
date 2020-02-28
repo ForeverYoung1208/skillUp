@@ -19,6 +19,12 @@ var jsonProducts = '[{"category":"TV","price":1500,"manufacturer":"Sony","create
 //===========================================================================
 
 
+
+
+
+
+
+
 function Menu(userOptions, quitString, wrongChoiseFn){ //[{key:string, optionName:string, optionFn:function, wrongChoiseFn:function }, string]
 	var options = userOptions.slice()
 	options.push({
@@ -56,6 +62,13 @@ function Menu(userOptions, quitString, wrongChoiseFn){ //[{key:string, optionNam
 	}
 }
 
+
+
+
+
+
+
+
 function Filters(initFilters){
 	
 	function isIncludes(inArray, thing) {
@@ -80,7 +93,8 @@ function Filters(initFilters){
 	this.applyFilters(initFilters)
 
 	this.addCateoriesFilter = function(categoryFilters){
-
+		this.category = this.category.concat(categoryFilters)
+		console.log(this)
 	}
 
 
@@ -110,6 +124,15 @@ function Filters(initFilters){
 	}.bind(this)
 }
 
+
+
+
+
+
+
+
+
+
 function Products(initProductList){
 	var _self = this
 	this.all = JSON.parse( initProductList, function (key,value) {
@@ -119,11 +142,10 @@ function Products(initProductList){
 		return value
 	})
 
-
 	var testFilters = {
 		category:['TV', 'Laptop'],
 		manufacturer:[],
-		price:{min:1150, max:1250},
+		price:{min:400, max:1250},
 		createdAt:{}
 	}
 	var emptyFilters = {
@@ -132,7 +154,6 @@ function Products(initProductList){
 		price:{},
 		createdAt:{}
 	}
-
 
 	this.activeFilters = new Filters( testFilters );
 	
@@ -163,7 +184,6 @@ function Products(initProductList){
 	}
 
 
-	//// TODO maybe, transfer to 'Filters' class !!!!
 	this.addCategoryFilterDialog = function(){
 		var categoryDialogOptions = []
 		var abc = 'abcdefghijklmnoprstuvwxyz'
@@ -176,16 +196,20 @@ function Products(initProductList){
 					optionFn: function (){ _self.activeFilters.addCateoriesFilter([product.category]) }
 				}
 			)
-			
 		})
 
-		//////////// TODO HERE
-		function getSelectedFiltersArray(selectionStr){
-
-			return[]
+		function selectionToOptionsArray(selectionStr, menuOptions){
+			var categories = [];
+			selectionStr.split('').forEach(function(selection){
+				categories.push( menuOptions.find(el => selection===el.key ).optionName)
+			})
+			return categories
 		}
 
-		var categoryDialog = new Menu(categoryDialogOptions, '--Back--', function(bigSelection){ _self.activeFilters.addCateoriesFilter([getSelectedFiltersArray(bigSelection)]) })
+		var categoryDialog = new Menu(categoryDialogOptions, '--Back--', function(bigSelection){ 
+			_self.activeFilters.addCateoriesFilter(selectionToOptionsArray(bigSelection, categoryDialogOptions)) 
+			_self.list();
+		})
 		categoryDialog.callMenu();
 				
 	}
@@ -196,6 +220,16 @@ function Products(initProductList){
 	}
 	
 }
+
+
+
+
+
+
+
+
+
+
 
 var products1 = new Products(jsonProducts)
 
