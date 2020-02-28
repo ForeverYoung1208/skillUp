@@ -16,8 +16,16 @@
     Coffee Machine: Кофемашина
 */
 var jsonProducts = '[{"category":"TV","price":1500,"manufacturer":"Sony","createdAt":"2019-05-28T17:55:29.945Z"},{"category":"Laptop","price":1200,"manufacturer":"Acer","createdAt":"2019-05-28T19:55:29.946Z"},{"category":"Smartphone","price":750,"manufacturer":"Apple","createdAt":"2018-03-08T10:45:00.000Z"},{"category":"Fridge","price":1850,"manufacturer":"Vestfrost","createdAt":"2018-05-28T17:55:29.946Z"},{"category":"Boiler","price":500,"manufacturer":"Indesit","createdAt":"2014-12-25T08:30:00.000Z"},{"category":"Stove","price":700,"manufacturer":"Gorenje","createdAt":"2018-09-17T11:00:00.000Z"},{"category":"Washing Machine","price":850,"manufacturer":"Electrolux","createdAt":"2019-05-28T18:55:29.946Z"},{"category":"Vacuum Cleaner","price":450,"manufacturer":"Samsung","createdAt":"2019-05-13T17:55:29.946Z"},{"category":"Conditioner","price":1000,"manufacturer":"Toshiba","createdAt":"2017-07-01T00:00:00.000Z"},{"category":"Iron","price":320,"manufacturer":"Philips","createdAt":"2013-11-18T07:20:00.000Z"},{"category":"Teapot","price":400,"manufacturer":"Bosch","createdAt":"2016-10-03T09:45:00.000Z"},{"category":"Electric Shaver","price":440,"manufacturer":"Braun","createdAt":"2019-05-29T03:55:29.946Z"},{"category":"Toaster","price":620,"manufacturer":"Tefal","createdAt":"2015-05-29T03:55:29.946Z"},{"category":"Coffee Machine","price":1300,"manufacturer":"Delonghi","createdAt":"2019-05-28T02:55:29.946Z"}]';
-//===========================================================================
 
+function findMinMax(inArray, propName){
+	var arr = inArray.map(function(el){	return el[propName] })
+	var min = Math.min.apply(Math, arr) 
+	var max = Math.max.apply(Math, arr) 
+	return {min:min, max:max}
+}
+
+
+//===========================================================================
 
 
 
@@ -76,13 +84,16 @@ function Filters(initFilters){
 		if (inArray.includes(thing)) return true;
 		return false
 	}
-
 	function isInMinMax(min, max, thing){
 		if (!min || !max) return true;
 		if (thing>min && thing<max) return true;
 		return false
 	}
-
+	var categoryPasses = isIncludes;
+	var manufacturerPasses = isIncludes;
+	var pricePasses = isInMinMax;
+	var createdAtPasses = isInMinMax;
+	
 	this.applyFilters = function(filters){
 		this.category = filters.category;
 		this.manufacturer = filters.manufacturer;
@@ -92,18 +103,10 @@ function Filters(initFilters){
 
 	this.applyFilters(initFilters)
 
-	this.addCateoriesFilter = function(categoryFilters){
-		this.category = this.category.concat(categoryFilters)
-		console.log(this)
+	this.addIsIncludesFilters = function(categoryFilters,filterType){
+		this[filterType] = this[filterType].concat(categoryFilters)
+		console.log(JSON.stringify(this))
 	}
-
-
-
-	var categoryPasses = isIncludes;
-	var manufacturerPasses = isIncludes;
-	var pricePasses = isInMinMax;
-	var createdAtPasses = isInMinMax;
-
 
 	this.testProduct = function(product){
 		var isFilteredOut = false
@@ -132,7 +135,6 @@ function Filters(initFilters){
 
 
 
-
 function Products(initProductList){
 	var _self = this
 	this.all = JSON.parse( initProductList, function (key,value) {
@@ -141,6 +143,7 @@ function Products(initProductList){
 		}
 		return value
 	})
+	
 
 	var testFilters = {
 		category:['TV', 'Laptop'],
@@ -171,7 +174,6 @@ function Products(initProductList){
 		});
 		
 		console.table(productsToDisplay)
-
 		console.log('[this.activeFilters]', JSON.stringify(this.activeFilters));
 		console.log('[totalQuantity]', totalQuantity);
 		console.log('[totalPrice]', totalPrice);
@@ -183,36 +185,49 @@ function Products(initProductList){
 		filtersMenu.callMenu()
 	}
 
-
-	this.addCategoryFilterDialog = function(){
-		var categoryDialogOptions = []
+	this.addIncludesFilterDialog = function(filterType){
+		var dialogOptions = []
 		var abc = 'abcdefghijklmnoprstuvwxyz'
 		var selection = ''
 		this.all.forEach(function(product,index) {
-			categoryDialogOptions.push(
+			dialogOptions.push(
 				{
 					key: abc[index],
-					optionName: product.category,
-					optionFn: function (){ _self.activeFilters.addCateoriesFilter([product.category]) }
+					optionName: product[filterType],
+					optionFn: function (){ _self.activeFilters.addIsIncludesFilters([product[filterType]], filterType) }
 				}
 			)
 		})
 
-		function selectionToOptionsArray(selectionStr, menuOptions){
+		function selectionToNamesArray(selectionStr, menuOptions){
 			var categories = [];
-			selectionStr.split('').forEach(function(selection){
+			selectionStr && selectionStr.split('').forEach(function(selection){
 				categories.push( menuOptions.find(el => selection===el.key ).optionName)
 			})
 			return categories
 		}
 
-		var categoryDialog = new Menu(categoryDialogOptions, '--Back--', function(bigSelection){ 
-			_self.activeFilters.addCateoriesFilter(selectionToOptionsArray(bigSelection, categoryDialogOptions)) 
+		var filterDialog = new Menu(dialogOptions, '--Back--', function(bigSelection){ 
+			_self.activeFilters.addIsIncludesFilters(selectionToNamesArray(bigSelection, dialogOptions), filterType) 
 			_self.list();
 		})
-		categoryDialog.callMenu();
-				
+		filterDialog.callMenu();
 	}
+
+	this.addPriceFilterDialog = function() {
+		var min = prompt('filter on price, enter min price: ' , findMinMax(_self.all, 'price').min); 
+		var max = prompt('filter on price, enter max price: ' , findMinMax(_self.all, 'price').max);
+		_self.activeFilters.addMinMaxFilter(min, max, 'price')
+	}
+
+	this.addCreaterAtFilterDialog = function() {
+		var min = prompt('filter on createrAt, enter min date (format MM.YYYY): ' , findMinMax(_self.all, 'price').min); 
+		var max = prompt('filter on createrAt, enter max date (format MM.YYYY): ' , findMinMax(_self.all, 'price').max);
+		minDate = Date(min.split('.')[1], min.split('.')[0])  //MM.YYYY
+		maxDate = Date(max.split('.')[1], max.split('.')[0])
+		_self.activeFilters.addMinMaxFilter(minDate, maxDate, 'createdAt')
+	}
+
 
 	this.clearFilters = function () {
 		this.activeFilters.applyFilters(emptyFilters)
@@ -252,20 +267,20 @@ var mainMenuOptions=[{
 var filtersMenuOptions = [{
 	key: 'a', 
 	optionName: 'категория', 
-	optionFn: function(){ products1.addCategoryFilterDialog('category');}
+	optionFn: function(){ products1.addIncludesFilterDialog('category');}
 },{
 	key: 'b', 
 	optionName: 'цена', 
-	optionFn: function(){ products1.addFilterDialog('price');}
+	optionFn: function(){ products1.addPriceFilterDialog();}
 },{
 	key: 'c', 
 	optionName: 'производитель', 
-	optionFn: function(){ products1.addFilterDialog('manufacturer');}
+	optionFn: function(){ products1.addIncludesFilterDialog('manufacturer');}
 
 },{
 	key: 'd', 
 	optionName: 'дата изготовления', 
-	optionFn: function(){ products1.addFilterDialog('createdAt');}
+	optionFn: function(){ products1.addCreaterAtFilterDialog();}
 
 },{
 	key: 'e', 
