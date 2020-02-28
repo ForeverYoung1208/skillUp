@@ -108,6 +108,12 @@ function Filters(initFilters){
 		console.log(JSON.stringify(this))
 	}
 
+	this.addMinMaxFilter = function(min, max, filterType) {
+		this[filterType].min = min;
+		this[filterType].max = max;
+		console.log(JSON.stringify(this))
+	}
+
 	this.testProduct = function(product){
 		var isFilteredOut = false
 
@@ -182,13 +188,13 @@ function Products(initProductList){
 	}
 
 	this.askFilters = function () {
+		var filtersMenu = new Menu(filtersMenuOptions, '--Back--', function(selection){console.log('wrong choise!', selection)})		
 		filtersMenu.callMenu()
 	}
 
 	this.addIncludesFilterDialog = function(filterType){
 		var dialogOptions = []
 		var abc = 'abcdefghijklmnoprstuvwxyz'
-		var selection = ''
 		this.all.forEach(function(product,index) {
 			dialogOptions.push(
 				{
@@ -200,15 +206,25 @@ function Products(initProductList){
 		})
 
 		function selectionToNamesArray(selectionStr, menuOptions){
+			if (!selectionStr) return[];
 			var categories = [];
-			selectionStr && selectionStr.split('').forEach(function(selection){
-				categories.push( menuOptions.find(el => selection===el.key ).optionName)
+			var foundOption;
+			var isInvert = selectionStr[selectionStr.length-1]==='-'
+			var selectionArr = selectionStr.split('')
+			
+			menuOptions.forEach(function(menuOption,index){
+				foundOption = null;
+				!isInvert 
+					? foundOption = selectionArr.some(sel => sel===menuOption.key )
+				 	: foundOption = !selectionArr.some(sel => sel===menuOption.key )
+
+				foundOption ? categories.push( menuOptions[index].optionName) : null
 			})
 			return categories
 		}
 
-		var filterDialog = new Menu(dialogOptions, '--Back--', function(bigSelection){ 
-			_self.activeFilters.addIsIncludesFilters(selectionToNamesArray(bigSelection, dialogOptions), filterType) 
+		var filterDialog = new Menu(dialogOptions, '--Back--', function(otherSelection){ 
+			_self.activeFilters.addIsIncludesFilters(selectionToNamesArray(otherSelection, dialogOptions), filterType) 
 			_self.list();
 		})
 		filterDialog.callMenu();
@@ -218,14 +234,21 @@ function Products(initProductList){
 		var min = prompt('filter on price, enter min price: ' , findMinMax(_self.all, 'price').min); 
 		var max = prompt('filter on price, enter max price: ' , findMinMax(_self.all, 'price').max);
 		_self.activeFilters.addMinMaxFilter(min, max, 'price')
+		_self.list();
 	}
 
+
+
+	//// =======TODO fucking dates!!!!!!!!!!!!
 	this.addCreaterAtFilterDialog = function() {
-		var min = prompt('filter on createrAt, enter min date (format MM.YYYY): ' , findMinMax(_self.all, 'price').min); 
-		var max = prompt('filter on createrAt, enter max date (format MM.YYYY): ' , findMinMax(_self.all, 'price').max);
-		minDate = Date(min.split('.')[1], min.split('.')[0])  //MM.YYYY
-		maxDate = Date(max.split('.')[1], max.split('.')[0])
+		var min = prompt('filter on createrAt, enter min date (format MM.YYYY): '); 
+		var max = prompt('filter on createrAt, enter max date (format MM.YYYY): ');
+		var minDate = new Date; 
+		var maxDate = new Date;
+		minDate.setTime(min.split('.')[1], min.split('.')[0])  //MM.YYYY
+		maxDate.setTime(max.split('.')[1], max.split('.')[0])
 		_self.activeFilters.addMinMaxFilter(minDate, maxDate, 'createdAt')
+		_self.list();		
 	}
 
 
@@ -248,6 +271,9 @@ function Products(initProductList){
 
 var products1 = new Products(jsonProducts)
 
+
+
+///////// static menus
 var mainMenuOptions=[{
 	key: 'a', 
 	optionName: 'Посмотреть список товаров', 
@@ -290,6 +316,6 @@ var filtersMenuOptions = [{
 
 
 var mainMenu = new Menu(mainMenuOptions, 'Выход из программы', function(selection){console.log('wrong choise!', selection)})
-var filtersMenu = new Menu(filtersMenuOptions, '--Back--', function(selection){console.log('wrong choise!', selection)})
+
 
 mainMenu.callMenu();
