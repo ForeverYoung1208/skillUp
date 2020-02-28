@@ -79,6 +79,10 @@ function Filters(initFilters){
 
 	this.applyFilters(initFilters)
 
+	this.addCateoriesFilter(filters){
+
+	}
+
 
 
 	var categoryPasses = isIncludes;
@@ -107,6 +111,7 @@ function Filters(initFilters){
 }
 
 function Products(initProductList){
+	var _self = this
 	this.all = JSON.parse( initProductList, function (key,value) {
 		if (key ==='createdAt'){
 			value = new Date(value)
@@ -160,18 +165,25 @@ function Products(initProductList){
 	this.addCategoryFilterDialog = function(){
 		var categoryDialogOptions = []
 		var abc = 'abcdefghijklmnoprstuvwxyz'
+		var selection = ''
 		this.all.forEach(function(product,index) {
 			categoryDialogOptions.push(
 				{
 					key: abc[index],
 					optionName: product.category,
-					optionFn: function (){console.log('[abc[index]]', abc[index]);}
+					optionFn: function (){ _self.activeFilters.addCateoriesFilter([product.category]) }
 				}
 			)
 			
 		})
 
-		var categoryDialog = new Menu(categoryDialogOptions, '--Back--', function(bigSelection){console.log('[bigSelection]', bigSelection) })
+		//////////// TODO HERE
+		function getSelectedFiltersArray(selectionStr){
+
+			return[]
+		}
+
+		var categoryDialog = new Menu(categoryDialogOptions, '--Back--', function(bigSelection){ _self.activeFilters.addCateoriesFilter([getSelectedFiltersArray(bigSelection)]) })
 		categoryDialog.callMenu();
 				
 	}
