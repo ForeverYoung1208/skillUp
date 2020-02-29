@@ -27,13 +27,14 @@ function findMinMax(inArray, propName){
 
 //===========================================================================
 
+////      /////
+/// ///  /// ///
+///   ///   ///
+///   ///    ///
+///         ///
+///         ///
 
-
-
-
-
-
-function Menu(userOptions, quitString, wrongChoiseFn, isMainMenu = false){ //[{key:string, optionName:string, optionFn:function, wrongChoiseFn:function, isMainMenu:boolean }, string]
+function Menu(userOptions, quitString, wrongChoiseFn, isAutoclose = false){ //[{key:string, optionName:string, optionFn:function, wrongChoiseFn:function, isAutoclose:boolean }, string]
 	var options = userOptions.slice()
 	options.push({
 		key:'q',
@@ -66,18 +67,21 @@ function Menu(userOptions, quitString, wrongChoiseFn, isMainMenu = false){ //[{k
 				wrongChoiseFn(userChoise);
 			}
 
-			isMainMenu ? null : this.doNextChoise = false;
+			isAutoclose ? null : this.doNextChoise = false;
 
 		}
 	}
 }
 
-
-
-
-
-
-
+///////////
+//////////
+///
+/// 
+/////////
+/////////
+///
+///
+///
 function Filters(initFilters){
 	
 	function isIncludes(inArray, thing) {
@@ -141,9 +145,16 @@ function Filters(initFilters){
 }
 
 
-
-
-
+	///////
+/////////
+/// 
+///	
+  /////
+   /////
+		 ///
+		 ///
+//////
+/////
 
 function Sorter(initSortOn){
 	this.sortOn = initSortOn,
@@ -155,11 +166,13 @@ function Sorter(initSortOn){
 
 
 	this.sort = function(product1,product2){
+		var invert;
+		this.isDescend ? invert=-1 : invert=1;
+	
+
 		function stringSort(stringA,stringB,desc) {
 			var a = stringA.toUpperCase();
 			var b = stringB.toUpperCase();
-			var invert;
-			desc ? invert=-1 : invert=1;
 			if (a < b) {
 				return -1*invert;
 			}
@@ -174,25 +187,28 @@ function Sorter(initSortOn){
 				return stringSort(product1[this.sortOn], product2[this.sortOn]);
 				break;
 			case 'manufacturer':
-				return(product1[this.sortOn], product2[this.sortOn]);
+				return stringSort(product1[this.sortOn], product2[this.sortOn]);
 				break;
 			case 'price':
-				return (product1[this.sortOn] - product2[this.sortOn]);
+				return (product1[this.sortOn] - product2[this.sortOn])*invert;
 				break;
 			case 'createdAt':
-				return (product1[this.sortOn] - product2[this.sortOn]);
+				return (product1[this.sortOn] - product2[this.sortOn])*invert;
 				break;
 		}
 
 	}.bind(this)
-
 }
 
-
-
-
-
-
+///////////
+///////////
+///     ///
+///     ///
+//////////
+//////////
+///
+///
+///
 
 function Products(initProductList){
 	var _self = this
@@ -217,11 +233,12 @@ function Products(initProductList){
 	}
 
 	this.activeFilters = new Filters( emptyFilters );
-	this.acriveSorter = new Sorter('category');
+	this.activeSorter = new Sorter('category');
 	this.list = function(){
 		var totalQuantity = 0, totalPrice = 0, averagePrice = 0;
 		var productsToDisplay = this.all
 			.filter(this.activeFilters.testProduct)
+			.sort(this.activeSorter.sort)
 			.map(function(product) {
 				totalQuantity ++;
 				totalPrice += product.price
@@ -231,6 +248,7 @@ function Products(initProductList){
 		
 		console.table(productsToDisplay)
 		console.log('[this.activeFilters]', JSON.stringify(this.activeFilters));
+		console.log('[this.activeSorter]', JSON.stringify(this.activeSorter));
 		console.log('[totalQuantity]', totalQuantity);
 		console.log('[totalPrice]', totalPrice);
 		totalQuantity > 0 ? averagePrice = totalPrice/totalQuantity : averagePrice = 0 ;
@@ -238,16 +256,46 @@ function Products(initProductList){
 	}
 
 	this.askFilters = function () {
-		var filtersMenu = new Menu( filtersMenuOptions, '--Back--', function(selection){console.log('wrong choise!', selection)} );
+		var filtersMenu = new Menu( filtersMenuOptions, '--Back--', function(selection){
+			console.log('wrong choise!', selection)
+		} );
 		filtersMenu.callMenu();
 	}
 
 	this.askSorting = function () {
-		var sortMenu = new Menu( sortMenuOptions, '--Back--', function(selection){console.log('under construction', selection)} );
+		var sortMenu = new Menu( sortMenuOptions, '--Back--', function(selection){
+			if ( selection[1]==='r' && ['a','b','c','d'].includes(selection[0]) ){
+				// _self.activeSorter.isDescend = true;
+
+				// ОХ И КАСТЫЛЬ... приходится так как мы уже в отбраковке, и в обычный колбек меню уже не попадём
+				switch(selection[0]){
+					case 'a':
+						products1.activeSorter.setSortOn('category', true);					
+						break;
+					case 'b':
+						products1.activeSorter.setSortOn('price', true);					
+						break;
+					case 'c':
+						products1.activeSorter.setSortOn('manufacturer', true);					
+						break;
+					case 'd':
+						products1.activeSorter.setSortOn('createdAt', true);					
+						break;
+				}
+
+			} else {
+				console.log('wrong choise:', selection);
+			}
+
+			console.log('[_self.activeSorter]', JSON.stringify(_self.activeSorter));
+			
+		} );
+		
 		sortMenu.callMenu();
 	}
 
-	this.includesFilterDialog = function(filterType){
+	//use this method to show dialog to ask array of values (prop filterType) to filter products with this array
+		this.includesFilterDialog = function(filterType){
 		var dialogOptions = []
 		var abc = 'abcdefghijklmnoprstuvwxyz'
 
@@ -284,13 +332,14 @@ function Products(initProductList){
 			return categories
 		}
 
-		//launch filter dialog menu and set it's behavior in case of other selection (we need to process
+		// set filter dialog menu and set it's behavior in case of other selection (we need to process
 		// selection like 'abc-')
 		var filterDialog = new Menu(dialogOptions, '--Back--', function(otherSelection){ 
 			_self.activeFilters.setIsIncludesFilters(selectionToNamesArray(otherSelection, dialogOptions), filterType);
 			console.log('[_self.activeFilters]', JSON.stringify(_self.activeFilters));
 			// _self.list();
 		})
+		// launch filter dialog
 		filterDialog.callMenu();
 	}
 
@@ -299,7 +348,6 @@ function Products(initProductList){
 		var max = prompt('filter on price, enter max price: ' , findMinMax(_self.all, 'price').max);
 		_self.activeFilters.setMinMaxFilter(min, max, 'price')
 		console.log('[_self.activeFilters]', JSON.stringify(_self.activeFilters));
-
 		// _self.list();
 	}
 
@@ -326,8 +374,8 @@ function Products(initProductList){
 
 
 
-
-
+///////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////
 
 
 var products1 = new Products(jsonProducts)
@@ -372,25 +420,37 @@ var filtersMenuOptions = [{
 var sortMenuOptions = [{
 	key: 'a', 
 	optionName: 'категория', 
-	optionFn: function(){ products1.acriveSorter.sort('category');}
+	optionFn: function(){ 
+		products1.activeSorter.setSortOn('category');
+		console.log('[products1.activeSorter]', JSON.stringify(products1.activeSorter));
+	}
 },{
 	key: 'b', 
 	optionName: 'цена', 
-	optionFn: function(){ products1.acriveSorter.sort('category');}
+	optionFn: function(){ 
+		products1.activeSorter.setSortOn('price');
+		console.log('[products1.activeSorter]', JSON.stringify(products1.activeSorter));
+	}
 },{
 	key: 'c', 
 	optionName: 'производитель', 
-	optionFn: function(){ products1.acriveSorter.sort('manufacturer');}
+	optionFn: function(){ 
+		products1.activeSorter.setSortOn('manufacturer');
+		console.log('[products1.activeSorter]', JSON.stringify(products1.activeSorter));
+	}
 
 },{
 	key: 'd', 
 	optionName: 'дата изготовления', 
-	optionFn: function(){ products1.acriveSorter.sort('createrAt');}
+	optionFn: function(){ 
+		products1.activeSorter.setSortOn('createdAt');
+		console.log('[products1.activeSorter]', JSON.stringify(products1.activeSorter));
+	}
 
 },{
 	key: 'r', 
 	optionName: 'В обратном порядке', 
-	optionFn: function(){console.log('add "r" to other selection');}
+	optionFn: function(){console.log('you need to add "r" to other selection');}
 }]
 
 
