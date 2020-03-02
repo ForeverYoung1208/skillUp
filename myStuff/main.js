@@ -36,15 +36,19 @@ Machine.prototype.showInfo = function(){
 function HomeMachine(param){
 	Machine.apply(this, arguments)
 	const {manufacturer} = param;
-	this.manufacturer = manufacturer;
+	this._manufacturer = manufacturer;
 }
-HomeMachine.prototype.__proto__= Machine.prototype
+HomeMachine.prototype = Object.create( Machine.prototype )
+HomeMachine.prototype.constructor= HomeMachine ;
 HomeMachine.showInfo = function () {
-	Machine.showInfo().call(this);
+    Machine.showInfo.call(this);
 }
-HomeMachine.showManufacturer = function(){
+HomeMachine.prototype.setManufacturer = function(mName){
+    this._manufacturer = mName;
+}
+HomeMachine.prototype.showManufacturer = function(){
 	let out = document.createElement('div')
-	out.innerText = 'hello';
+	out.innerText = this._manufacturer;
 	output.appendChild(out)
 
 }
@@ -56,6 +60,9 @@ tv.showInfo();
 let fridge = new Machine({dimensions: {x:500, y:500, z:2000}, color:'white'})
 fridge.showInfo();
 
-let coffeeMachine = Machine({dimensions: {x:300, y:300, z:300}, color:'white'}, {manufacturer:'Samsung'})
+let coffeeMachine = new HomeMachine({dimensions: {x:300, y:300, z:300}, color:'white'}, {manufacturer:'Samsung'})
 coffeeMachine.showInfo();
 coffeeMachine.showManufacturer();
+coffeeMachine.setManufacturer('Samsung')
+coffeeMachine.showManufacturer();
+console.log('[coffeMachine]', coffeeMachine);
