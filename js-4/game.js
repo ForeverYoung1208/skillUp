@@ -11,7 +11,7 @@ class TilesGame {
     this.node = document.createElement('div')
     // this.node.addEventListener('click',this.clickHandler.bind(this))
     this.node.onclick = this.clickHandler.bind(this);
-    this.fillCellsRandom(cellsX, cellsY, colors);
+    this.fillCellsRandom(cellsY, cellsX, colors);
 
     this.render = ()=>{
       this.node.className = 'game-field'
@@ -19,7 +19,7 @@ class TilesGame {
     }
   }
 
-  fillCellsRandom(cellsX, cellsY, colors){
+  fillCellsRandom(cellsY, cellsX, colors){
     let colorsPool = colors.flat()
     let randomPoolIndex;
     this.cells = new Array(cellsY);
@@ -28,38 +28,45 @@ class TilesGame {
       for (let x = 0; x<cellsX; x++){
         randomPoolIndex = Math.round( Math.random()*colorsPool.length)-1;
         let randomColor = colorsPool.splice(randomPoolIndex,1);
-        this.cells[y][x]= new Cell(randomColor[0], x,y, this.cellWidth, this.cellHight, this.node);
+        this.cells[y][x]= new Cell(randomColor[0], y, x, this.cellWidth, this.cellHight, this.node);
       }
     }
   }
   
   clickHandler(e){
-    this.moveCell(+e.target.dataset.x, +e.target.dataset.y)
+    this.moveCell(+e.target.dataset.y, +e.target.dataset.x)
   }
 
-  moveCell(x,y){
+  moveCell(y,x){
     if ( !isFinite(x) || !isFinite(y) ) return console.log('strange NaN - maybe, misclick');
     if ( this.cells[y][x+1] && this.cells[y][x+1].color==='empty' ){
       console.log('right');
 
     }else if( this.cells[y+1] && this.cells[y+1][x].color==='empty' ){
       
-      console.log('down');
-
+      console.log('down');      
       this.node.onclick=null;
+
       this.cells[y][x].moveDown()
-      setTimeout(()=>{
-        this.node.onclick = this.clickHandler.bind(this);
-      }, 1000)
-        
-
-
       
       let tmp = this.cells[y][x]
       this.cells[y][x] = this.cells[y+1][x]
       this.cells[y+1][x] = tmp
+      
+      setTimeout(()=>{
+        this.node.onclick = this.clickHandler.bind(this);
 
+        this.cells[y][x].node.remove();
+        this.cells[y+1][x].node.remove();
 
+        let c1 = this.cells[y][x].color
+        let c2 = this.cells[y+1][x].color
+
+        this.cells[y][x] = new Cell(c1, y, x, this.cellWidth, this.cellHight, this.node)
+        this.cells[y+1][x] = new Cell(c2, y+1, x, this.cellWidth, this.cellHight, this.node)
+
+      }, 1000)
+      
     }else if( this.cells[y][x-1] && this.cells[y][x-1].color==='empty' ){
       console.log('left');
 
@@ -69,11 +76,13 @@ class TilesGame {
     }
   }
 
+  // swapCells(y1,x1, y2,x2)
+
 
 }
 
 class Cell{
-  constructor(cellColor, x, y, cellWidth, cellHight, gameField ){
+  constructor(cellColor, y, x,  cellWidth, cellHight, gameField ){
 
     this.cellWidth = cellWidth
     this.cellHight = cellHight
