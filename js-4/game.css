@@ -23,6 +23,7 @@
   position: absolute;
   border: 1px rgb(0, 73, 73);
   box-shadow: black inset 0 0 5px;
+  transition: all 1000ms;
 }
 
 .cell.color-yellow{
