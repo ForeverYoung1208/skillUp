@@ -1,25 +1,67 @@
 'use strict'
 
+class ProgressMeter{
+  constructor(totalStages, left){
+    this.totalStages = totalStages
 
-class TilesGame {
-  constructor(gameOptions){
-    const {sizeX, sizeY, cellsX, cellsY, colors, winPattern} = gameOptions;
-    this.cellWidth = sizeX/cellsX
-    this.cellHight = sizeY/cellsY
-    
-    this.cells = []
     this.node = document.createElement('div')
-    // this.node.addEventListener('click',this.clickHandler.bind(this))
-    this.node.onclick = this.clickHandler.bind(this);
-    this.fillCellsRandom(cellsY, cellsX, colors);
+    this.node.innerHTML = `
+      <div id='progress__wrapper'> 
+        <h2>Progress meter</h2>
+        <div class='progress__border'>
+          <div class='progress__bar'></div>
+        </div>
+        <h3 id='progress__message'></h3>
+        </div>
+    `
+    this.progressbarNode = this.node.querySelector('.progress__bar')
+    this.messageNode = this.node.querySelector('#progress__message')
+    this.setProgress(left)
+
 
     this.render = ()=>{
-      this.node.className = 'game-field'
       return this.node
     }
   }
 
-  fillCellsRandom(cellsY, cellsX, colors){
+  setProgress(left){
+    this.progressbarNode.style.width = ( (this.totalStages - left)/this.totalStages * 100 ).toFixed() + '%'
+    left === 0
+    ? this.messageNode.textContent = 'You win!!! Cool!'
+    : this.messageNode.textContent = `left ${left} stages of ${this.totalStages}`
+    
+    
+  }
+
+}
+
+
+class TilesGame {
+  constructor(gameOptions){
+    const {sizeX, sizeY, cellsX, cellsY, colors, winPatterns} = gameOptions;
+    const startingWinPatternsAmount = winPatterns.length
+
+    this.cellWidth = sizeX/cellsX
+    this.cellHight = sizeY/cellsY
+    this.winPatterns = winPatterns
+    this.cells = []
+
+    this.progressMeter = new ProgressMeter(startingWinPatternsAmount, winPatterns.length)
+    this.node = document.createElement('div')
+    this.node.style.width = (sizeX+0)+'px';
+    this.node.style.height = (sizeY+0)+'px';
+    this.node.onclick = this.clickHandler.bind(this);
+    this.fillCellsRandomly(cellsY, cellsX, colors);
+    
+    this.render = ()=>{
+      this.node.className = 'game-field'
+      return this.node
+    }
+
+    
+  }
+
+  fillCellsRandomly(cellsY, cellsX, colors){
     let colorsPool = colors.flat()
     let randomPoolIndex;
     this.cells = new Array(cellsY);
@@ -34,35 +76,65 @@ class TilesGame {
   }
   
   clickHandler(e){
-    this.moveCell(+e.target.dataset.y, +e.target.dataset.x)
+    this.moveCell(+e.target.dataset.y, +e.target.dataset.x).then(()=>{
+      let stagesLeft = this.checkWinState()  // false or array of remaining win patters
+      if (!stagesLeft) return;
+      this.progressMeter.setProgress(stagesLeft.length)
+      if (stagesLeft.length>0){
+        console.log('Stage done! '+ stagesLeft.length+ ' left');
+      } else {
+        setTimeout(()=>{
+          confirm('you win! Play again?')
+          ? startGame()
+          : closeGame()
+        }, 200) 
+      }
+    })
   }
 
-  moveCell(y,x){
+  checkWinState(){
+    // console.log('not a winner yet');
+    for( let y = 0; y < this.cells.length; y++){
+      for ( let x = 0; x < this.cells[y].length; x++){
+        if ( this.winPatterns[0][y][x]!=='any' && this.cells[y][x].color !== this.winPatterns[0][y][x]){
+          console.log('fail on', y, x );
+          console.log('expected ', this.winPatterns[0][y][x]);
+          console.log('got ', this.cells[y][x].color );
+          console.log('-----------');
+          return false
+        }
+      }
+    }
+    this.winPatterns.splice(0, 1)
+    return this.winPatterns
+  }
+
+  async moveCell(y,x){
     if ( !isFinite(x) || !isFinite(y) ) return console.log('strange NaN - maybe, misclick');
     if ( this.cells[y][x+1] && this.cells[y][x+1].color==='empty' ){
-      console.log('right');
+      // console.log('right');
       this.cells[y][x].animateRight()
-      this.swapCells({y, x}, {y, x:x+1})             //includes timeout for finish animation
+      await this.swapCells({y, x}, {y, x:x+1})             //includes timeout for finish animation
 
     }else if( this.cells[y+1] && this.cells[y+1][x].color==='empty' ){
-      console.log('down');      
+      // console.log('down');      
       this.cells[y][x].animateDown()
-      this.swapCells({y, x}, {y: y+1, x})             //includes timeout for finish animation
+      await this.swapCells({y, x}, {y: y+1, x})             //includes timeout for finish animation
       
     }else if( this.cells[y][x-1] && this.cells[y][x-1].color==='empty' ){
-      console.log('left');
+      // console.log('left');
       this.cells[y][x].animateLeft()
-      this.swapCells({y, x}, {y, x:x-1})             //includes timeout for finish animation
+      await this.swapCells({y, x}, {y, x:x-1})             //includes timeout for finish animation
 
     }else if( this.cells[y-1] && this.cells[y-1][x].color==='empty' ){
-      console.log('up');
+      // console.log('up');
       this.cells[y][x].animateUp()
-      this.swapCells({y, x}, {y: y-1, x})             //includes timeout for finish animation
+      await this.swapCells({y, x}, {y: y-1, x})             //includes timeout for finish animation
 
     }
   }
 
-  swapCells(c1, c2){
+  async swapCells(c1, c2){
     // disable click handling to prevent simulatinous moves
     this.node.onclick=null;
 
@@ -74,24 +146,23 @@ class TilesGame {
     // swap in DOM after animation ends through deleting nodes
     // and then rebuild them from cells array
     
-    setTimeout(()=>{
-      
-      this.cells[c1.y][c1.x].removeNode();
-      this.cells[c2.y][c2.x].removeNode();
-      
-      this.cells[c1.y][c1.x].buildNode(c1.y, c1.x, this.node);
-      this.cells[c2.y][c2.x].buildNode(c2.y, c2.x, this.node);
-      
-      //re-bind click handler to enable new turns
-      this.node.onclick = this.clickHandler.bind(this);
-    }, 150)    
+    await new Promise(resolve => {
+      setTimeout(()=>{
+        
+        this.cells[c1.y][c1.x].removeNode();
+        this.cells[c2.y][c2.x].removeNode();
+        
+        this.cells[c1.y][c1.x].buildNode(c1.y, c1.x, this.node);
+        this.cells[c2.y][c2.x].buildNode(c2.y, c2.x, this.node);
+        
+        //re-bind click handler to enable new turns
+        this.node.onclick = this.clickHandler.bind(this);
+        resolve();
+      }, 100)    
+    })
 
   }
 }
-
-
-
-
 
 class Cell{
   constructor(cellColor, y, x,  cellWidth, cellHight, gameFieldNode ){
@@ -136,11 +207,7 @@ class Cell{
     this.node.style.left = String(this.node.dataset.x*this.cellWidth + this.cellWidth) + 'px'
   }
 
-
-
 }
-
-
 
 
 const gameOptions1 = {
@@ -152,25 +219,39 @@ const gameOptions1 = {
   winPatterns:[[
     ['yellow', 'any', 'any', 'any'],
     ['yellow', 'any', 'any', 'any'],
-    ['yellow', 'any', 'any', 'any'],
-    ['yellow', 'any', 'any', 'any'],
-  ],
-  [
-    ['blue', 'blue', 'blue', 'blue'],
-    ['any', 'any', 'any', 'any'],
     ['any', 'any', 'any', 'any'],
     ['any', 'any', 'any', 'any'],
   ],
   [
-    ['any', 'any', 'any', 'red'],
-    ['any', 'any', 'red', 'any'],
+    ['blue', 'blue', 'any', 'any'],
+    ['any', 'any', 'any', 'any'],
+    ['any', 'any', 'any', 'any'],
+    ['any', 'any', 'any', 'any'],
+  ],
+  [
+    ['any', 'any', 'any', 'any'],
+    ['any', 'any', 'any', 'any'],
     ['any', 'red', 'any', 'any'],
     ['red', 'any', 'any', 'any'],
   ]]
 }
 gameOptions1.colors[0][0]='empty'
 
-const game = new TilesGame(gameOptions1);
-console.log('[game]', game);
 
-document.querySelector('#game-wrapper').appendChild( game.render() )
+function startGame(selector='#game-wrapper'){
+  const gameNode = document.querySelector(selector)
+  let JSONgameOprions1 = JSON.stringify(gameOptions1)
+  const game = new TilesGame( JSON.parse(JSONgameOprions1));
+  gameNode.innerHTML = '';
+  gameNode.appendChild( game.progressMeter.render() )
+  gameNode.appendChild( game.render() )
+}
+
+function closeGame(selector='#game-wrapper') {
+  const gameNode = document.querySelector(selector)
+  gameNode.innerHTML = '';
+  alert('Bye! See Ya !')
+}
+
+
+startGame();

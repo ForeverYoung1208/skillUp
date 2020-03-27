@@ -6,16 +6,57 @@
 #game-wrapper{
   display: flex;
   height: 100vh;
+  flex-direction: column;
 }
 
+#progress__wrapper{
+  display: block;
+  background-color: cyan;
+  box-shadow: cyan 0 0 5px 5px;
+  border-radius: 3px;
+  width: 60%;
+  min-width: 200px;
+  margin: 20px auto;
+}
+
+#progress__wrapper>h2, #progress__message{
+  font-family: Arial, Helvetica, sans-serif;
+  color: rgb(0, 83, 83);
+  display: inline-block;
+  width: 100%;
+  text-align: center;
+}
+
+#progress__message{
+  font-size: small;
+}
+
+.progress__border{
+  margin: 20px auto;
+  padding: 0 4px;
+  border: solid 2px darkcyan;
+  border-radius: 10px;
+  box-shadow: darkcyan 0 0 2px 2px;
+  height: 17px;
+  width: 90%;
+}
+
+.progress__bar{
+  margin: 4px 0;
+  background-color: yellow;
+  height: 5px;
+  width: 0%;
+  box-shadow: yellow 0 0 3px 3px;
+  transition: ease-in-out width 200ms;
+}
+
+
+
 .game-field{
-  margin: auto;
-  width: 400px;
-  height: 400px;
-  border: 1px solid darkcyan;
+  margin: 50px auto;
   border-radius: 2px;
-  box-shadow: darkcyan 0px 0px 5px 5px;
-  background-color: rgb(0, 73, 73);
+  box-shadow: black 0px 0px 5px 5px;
+  background-color: black;
   position: relative;
 }
 
@@ -23,7 +64,8 @@
   position: absolute;
   border: 1px rgb(0, 73, 73);
   box-shadow: black inset 0 0 5px;
-  transition: all 200ms;
+  transition: all 150ms;
+  cursor: pointer;
 }
 
 .cell.color-yellow{
