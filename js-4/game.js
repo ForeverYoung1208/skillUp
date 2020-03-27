@@ -51,6 +51,7 @@ class TilesGame {
     this.node.style.width = (sizeX+0)+'px';
     this.node.style.height = (sizeY+0)+'px';
     this.node.onclick = this.clickHandler.bind(this);
+    this.node.onkeypress = this.keypressHanler.bind(this)
     this.fillCellsRandomly(cellsY, cellsX, colors);
     
     this.render = ()=>{
@@ -90,6 +91,10 @@ class TilesGame {
         }, 200) 
       }
     })
+  }
+
+  keypressHanler(){
+    //... TODO. ...
   }
 
   checkWinState(){
@@ -219,20 +224,20 @@ const gameOptions1 = {
   winPatterns:[[
     ['yellow', 'any', 'any', 'any'],
     ['yellow', 'any', 'any', 'any'],
-    ['any', 'any', 'any', 'any'],
-    ['any', 'any', 'any', 'any'],
+    ['yellow', 'any', 'any', 'any'],
+    ['yellow', 'any', 'any', 'empty'],
   ],
   [
-    ['blue', 'blue', 'any', 'any'],
+    ['blue', 'blue', 'blue', 'blue'],
     ['any', 'any', 'any', 'any'],
     ['any', 'any', 'any', 'any'],
-    ['any', 'any', 'any', 'any'],
+    ['any', 'any', 'any', 'empty'],
   ],
   [
-    ['any', 'any', 'any', 'any'],
-    ['any', 'any', 'any', 'any'],
+    ['any', 'any', 'any', 'red'],
+    ['any', 'any', 'red', 'any'],
     ['any', 'red', 'any', 'any'],
-    ['red', 'any', 'any', 'any'],
+    ['red', 'any', 'any', 'empty'],
   ]]
 }
 gameOptions1.colors[0][0]='empty'
