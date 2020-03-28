@@ -1,9 +1,9 @@
 'use strict'
 
+
 class ProgressMeter{
   constructor(totalStages, left){
     this.totalStages = totalStages
-
     this.node = document.createElement('div')
     this.node.innerHTML = `
       <div id='progress__wrapper'> 
@@ -18,7 +18,6 @@ class ProgressMeter{
     this.messageNode = this.node.querySelector('#progress__message')
     this.setProgress(left)
 
-
     this.render = ()=>{
       return this.node
     }
@@ -29,12 +28,9 @@ class ProgressMeter{
     left === 0
     ? this.messageNode.textContent = 'You win!!! Cool!'
     : this.messageNode.textContent = `left ${left} stages of ${this.totalStages}`
-    
-    
   }
 
 }
-
 
 class TilesGame {
   constructor(gameOptions){
@@ -45,21 +41,22 @@ class TilesGame {
     this.cellHight = sizeY/cellsY
     this.winPatterns = winPatterns
     this.cells = []
-
+    this.pointedCellNode = null;
     this.progressMeter = new ProgressMeter(startingWinPatternsAmount, winPatterns.length)
+
     this.node = document.createElement('div')
     this.node.style.width = (sizeX+0)+'px';
     this.node.style.height = (sizeY+0)+'px';
     this.node.onclick = this.clickHandler.bind(this);
-    this.node.onkeypress = this.keypressHanler.bind(this)
+    this.node.onmousemove = ( e => this.pointedCellNode = e.toElement)
     this.fillCellsRandomly(cellsY, cellsX, colors);
-    
+
+    document.onkeypress = this.keypressHanler.bind(this)
+
     this.render = ()=>{
       this.node.className = 'game-field'
       return this.node
     }
-
-    
   }
 
   fillCellsRandomly(cellsY, cellsX, colors){
@@ -93,8 +90,12 @@ class TilesGame {
     })
   }
 
-  keypressHanler(){
-    //... TODO. ...
+  keypressHanler(e){
+    if (e.key === 'Enter'){
+      this.pointedCellNode.click();
+
+    }
+
   }
 
   checkWinState(){
