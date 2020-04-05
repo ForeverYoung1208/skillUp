@@ -32,33 +32,99 @@ class ProgressMeter{
 
 }
 
-class TilesGame {
+class AbstractGameField {
   constructor(gameOptions){
     const {sizeX, sizeY, cellsX, cellsY, colors, winPatterns} = gameOptions;
-    const startingWinPatternsAmount = winPatterns.length
 
     this.cellWidth = sizeX/cellsX
     this.cellHight = sizeY/cellsY
-    this.winPatterns = winPatterns
     this.cells = []
-    this.pointedCellNode = null;
-    this.progressMeter = new ProgressMeter(startingWinPatternsAmount, winPatterns.length)
 
     this.node = document.createElement('div')
     this.node.style.width = (sizeX+0)+'px';
     this.node.style.height = (sizeY+0)+'px';
-    this.node.onclick = this.clickHandler.bind(this);
-    this.node.onmousemove = ( e => this.pointedCellNode = e.toElement)
-    this.fillCellsRandomly(cellsY, cellsX, colors);
-
-    document.onkeypress = this.keypressHanler.bind(this)
+    this.node.style.minHeight = (sizeY+0)+'px';
+    // this.fillCells(cellsY, cellsX, colors);
 
     this.render = ()=>{
-      this.node.className = 'game-field'
+      this.node.className = 'abstract-game-field'
       return this.node
     }
   }
 
+}
+
+class Cell{
+  constructor(cellColor, y, x,  cellWidth, cellHight, gameFieldNode ){
+
+    this.cellWidth = cellWidth
+    this.cellHight = cellHight
+    this.color = cellColor
+    this.buildNode(y,x,gameFieldNode)
+  }
+
+  removeNode(){
+    this.node.remove();
+  }
+
+  buildNode(y,x,gameFieldNode){
+    this.node = document.createElement('div')
+    this.node.dataset.y = y
+    this.node.dataset.x = x
+
+    this.node.className = 'cell color-'+this.color;
+    
+    this.node.style.height = this.cellHight+'px'
+    this.node.style.width = this.cellWidth+'px'
+    this.node.style.top = this.cellHight*y+'px'
+    this.node.style.left = this.cellWidth*x+'px'
+    gameFieldNode.appendChild(this.node)
+  }
+
+  animateDown(){
+    this.node.style.top = String(this.node.dataset.y*this.cellHight + this.cellHight) + 'px'
+  }
+
+  animateUp(){
+    this.node.style.top = String(this.node.dataset.y*this.cellHight - this.cellHight) + 'px'
+  }
+
+  animateLeft(){
+    this.node.style.left = String(this.node.dataset.x*this.cellWidth - this.cellWidth) + 'px'
+  }
+
+  animateRight(){
+    this.node.style.left = String(this.node.dataset.x*this.cellWidth + this.cellWidth) + 'px'
+  }
+
+}
+
+class TilesGame extends AbstractGameField{
+  constructor(gameOptions){
+    super(gameOptions)
+
+    const {sizeX, sizeY, cellsX, cellsY, colors, winPatterns} = gameOptions;
+    const startingWinPatternsAmount = winPatterns.length
+    
+    this.winPatterns = winPatterns
+    this.pointedCellNode = null;
+    this.progressMeter = new ProgressMeter(startingWinPatternsAmount, winPatterns.length)
+    this.sampleFields = new SampleFields(gameOptions)
+    this.fillCellsRandomly(cellsY, cellsX, colors);
+
+
+    this.node.onclick = this.clickHandler.bind(this);
+    this.node.onmousemove = ( e => this.pointedCellNode = e.toElement)
+
+    document.onkeypress = this.keypressHanler.bind(this)
+    this.render = ()=>{
+      this.node.className = 'game-field'
+      return this.node
+    }    
+
+  }
+
+  //fill randomly from given colors
   fillCellsRandomly(cellsY, cellsX, colors){
     let colorsPool = colors.flat()
     let randomPoolIndex;
@@ -79,7 +145,7 @@ class TilesGame {
       if (!stagesLeft) return;
       this.progressMeter.setProgress(stagesLeft.length)
       if (stagesLeft.length>0){
-        console.log('Stage done! '+ stagesLeft.length+ ' left');
+        // console.log('Stage done! '+ stagesLeft.length+ ' left');
       } else {
         setTimeout(()=>{
           confirm('you win! Play again?')
@@ -103,10 +169,10 @@ class TilesGame {
     for( let y = 0; y < this.cells.length; y++){
       for ( let x = 0; x < this.cells[y].length; x++){
         if ( this.winPatterns[0][y][x]!=='any' && this.cells[y][x].color !== this.winPatterns[0][y][x]){
-          console.log('fail on', y, x );
-          console.log('expected ', this.winPatterns[0][y][x]);
-          console.log('got ', this.cells[y][x].color );
-          console.log('-----------');
+          // console.log('fail on', y, x );
+          // console.log('expected ', this.winPatterns[0][y][x]);
+          // console.log('got ', this.cells[y][x].color );
+          // console.log('-----------');
           return false
         }
       }
@@ -166,63 +232,79 @@ class TilesGame {
         resolve();
       }, 100)    
     })
+  }  
+}
 
+class SampleFields{
+  constructor(gameOptions){
+    const {winPatterns} = gameOptions;
+    const sampleFieldOptions={
+      ...gameOptions,
+      sizeX: gameOptions.sizeX/gameOptions.sampleAspect,
+      sizeY: gameOptions.sizeY/gameOptions.sampleAspect,
+    }
+    this.node = document.createElement('div')
+    this.node.innerHTML=
+    `
+    <div class='sample-fields-wrapper'>
+      <h3> Stages to complete </h3>
+      <div class ='sample-fields'></div>
+    </div>
+    `
+    const sampleFields = this.node.querySelector('.sample-fields')
+    
+    winPatterns.forEach( (pattern, index) =>{
+      const t = sampleFields.appendChild(document.createElement('h4'))
+      t.innerHTML='Stage '+ (index+1)+ ' :'
+      sampleFields.appendChild( new SampleField(sampleFieldOptions, pattern).render())
+    })
+    this.render = () =>{
+      return this.node
+    }
   }
 }
 
-class Cell{
-  constructor(cellColor, y, x,  cellWidth, cellHight, gameFieldNode ){
+class SampleField extends AbstractGameField{
+  constructor(gameOptions, pattern){
+    super(gameOptions)
+    this.cells = pattern  
+    this.fillCells(gameOptions.cellsY, gameOptions.cellsX, pattern);    
+    this.render = ()=>{
+      this.node.className = 'sample-game-field'
+      return this.node
+    }        
 
-    this.cellWidth = cellWidth
-    this.cellHight = cellHight
-    this.color = cellColor
-    this.buildNode(y,x,gameFieldNode)
   }
-
-  removeNode(){
-    this.node.remove();
-  }
-
-  buildNode(y,x,gameFieldNode){
-    this.node = document.createElement('div')
-    this.node.dataset.y = y
-    this.node.dataset.x = x
-
-    this.node.className = 'cell color-'+this.color;
+  //fill directly from given pattern
+  fillCells(cellsY, cellsX, pattern){
     
-    this.node.style.height = this.cellHight+'px'
-    this.node.style.width = this.cellWidth+'px'
-    this.node.style.top = this.cellHight*y+'px'
-    this.node.style.left = this.cellWidth*x+'px'
-    gameFieldNode.appendChild(this.node)
-  }
+    console.log('[pattern]', pattern);
+    this.cells = new Array(cellsY);
+    for (let y = 0; y<cellsY; y++){
+      this.cells[y] = new Array(cellsX)
+      for (let x = 0; x<cellsX; x++){
+        this.cells[y][x]= new Cell(pattern[y][x], y, x, this.cellWidth, this.cellHight, this.node);
+      }
+    }
+    console.log('[this.cells]', this.cells);
 
-  animateDown(){
-    this.node.style.top = String(this.node.dataset.y*this.cellHight + this.cellHight) + 'px'
   }
-
-  animateUp(){
-    this.node.style.top = String(this.node.dataset.y*this.cellHight - this.cellHight) + 'px'
-  }
-
-  animateLeft(){
-    this.node.style.left = String(this.node.dataset.x*this.cellWidth - this.cellWidth) + 'px'
-  }
-
-  animateRight(){
-    this.node.style.left = String(this.node.dataset.x*this.cellWidth + this.cellWidth) + 'px'
-  }
-
 }
 
 
 const gameOptions1 = {
   sizeX:400,
   sizeY:400,
+  sampleAspect:4,
   cellsX: 4,
   cellsY: 4,
   colors: [1,2,3,4].map( n => ['green', 'yellow', 'blue', 'red']),
   winPatterns:[[
+    ['yellow', 'red', 'green', 'any'],
+    ['yellow', 'any', 'any', 'any'],
+    ['yellow', 'any', 'any', 'any'],
+    ['yellow', 'any', 'any', 'empty'],
+  ],[
     ['yellow', 'any', 'any', 'any'],
     ['yellow', 'any', 'any', 'any'],
     ['yellow', 'any', 'any', 'any'],
@@ -239,7 +321,7 @@ const gameOptions1 = {
     ['any', 'any', 'red', 'any'],
     ['any', 'red', 'any', 'any'],
     ['red', 'any', 'any', 'empty'],
-  ]]
+  ],]
 }
 gameOptions1.colors[0][0]='empty'
 
@@ -251,6 +333,7 @@ function startGame(selector='#game-wrapper'){
   gameNode.innerHTML = '';
   gameNode.appendChild( game.progressMeter.render() )
   gameNode.appendChild( game.render() )
+  gameNode.appendChild( game.sampleFields.render() )  
 }
 
 function closeGame(selector='#game-wrapper') {

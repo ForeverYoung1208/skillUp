@@ -52,15 +52,34 @@
 
 
 
-.game-field{
+.game-field, .sample-game-field{
   margin: 50px auto;
   border-radius: 2px;
   box-shadow: black 0px 0px 5px 5px;
   background-color: black;
   position: relative;
 }
+.sample-game-field{
+  margin-left: 10px;
+}
 
-.game-field > .cell{
+.sample-fields{
+  display: flex;
+}
+h3{
+  font-family: Arial, Helvetica, sans-serif;
+  color: rgb(0, 83, 83);
+  text-align: center;
+}
+h4{
+  font-family: Arial, Helvetica, sans-serif;
+  color: rgb(0, 83, 83);
+
+  display: inline-block;
+  margin: auto 0 auto 20px;  
+}
+
+.cell{
   position: absolute;
   border: 1px rgb(0, 73, 73);
   box-shadow: black inset 0 0 5px;
@@ -84,6 +103,11 @@
 .cell.color-green{
   background-color: lightgreen;
 }
+
+.cell.color-any{
+  background-color: darkslategray;
+}
+
 
 .cell.color-empty{
   background-color: rgba(0, 73, 73, 0);
