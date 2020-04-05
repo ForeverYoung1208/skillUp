@@ -278,7 +278,7 @@ class SampleField extends AbstractGameField{
   //fill directly from given pattern
   fillCells(cellsY, cellsX, pattern){
     
-    console.log('[pattern]', pattern);
+    // console.log('[pattern]', pattern);
     this.cells = new Array(cellsY);
     for (let y = 0; y<cellsY; y++){
       this.cells[y] = new Array(cellsX)
@@ -286,7 +286,7 @@ class SampleField extends AbstractGameField{
         this.cells[y][x]= new Cell(pattern[y][x], y, x, this.cellWidth, this.cellHight, this.node);
       }
     }
-    console.log('[this.cells]', this.cells);
+    // console.log('[this.cells]', this.cells);
 
   }
 }
@@ -300,11 +300,6 @@ const gameOptions1 = {
   cellsY: 4,
   colors: [1,2,3,4].map( n => ['green', 'yellow', 'blue', 'red']),
   winPatterns:[[
-    ['yellow', 'red', 'green', 'any'],
-    ['yellow', 'any', 'any', 'any'],
-    ['yellow', 'any', 'any', 'any'],
-    ['yellow', 'any', 'any', 'empty'],
-  ],[
     ['yellow', 'any', 'any', 'any'],
     ['yellow', 'any', 'any', 'any'],
     ['yellow', 'any', 'any', 'any'],
@@ -321,7 +316,13 @@ const gameOptions1 = {
     ['any', 'any', 'red', 'any'],
     ['any', 'red', 'any', 'any'],
     ['red', 'any', 'any', 'empty'],
-  ],]
+  ],
+  [
+    ['yellow', 'red', 'green', 'blue'],
+    ['any', 'any', 'any', 'any'],
+    ['any', 'any', 'any', 'any'],
+    ['yellow', 'red', 'green', 'empty'],
+  ]]
 }
 gameOptions1.colors[0][0]='empty'
 
