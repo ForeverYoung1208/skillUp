@@ -1,0 +1,31 @@
+@import '../../variables.scss';
+
+.profile {
+  display: flex;
+  align-self: center;
+  align-items: center;
+
+  &__username {
+    font-size: 1.2rem;
+    margin-right: 10px;
+  }
+
+  &__icon-wrapper {
+    padding: 8px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background-color 200ms ease;
+
+    &:hover {
+      background-color: rgba($accent, .2);
+    }
+  }
+
+  &__icon {
+    font-size: 1.2rem;
+  }
+
+  &__modal {
+    max-width: 800px;
+  }
+}

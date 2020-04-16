@@ -1,0 +1,82 @@
+@import '../../../variables.scss';
+
+.product {
+  display: flex;
+  flex-direction: column;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 4px;
+  box-shadow: 0 10px 15px rgba(black, .1);
+
+  &__top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+
+    @include media(576px) {
+      flex-direction: column;
+    }
+
+    @include media(650px) {
+      flex-direction: row;
+    }
+  }
+
+  &__img-wrapper {
+    margin-bottom: 20px;
+    height: 250px;
+    position: relative;
+    
+    @include media(768px) {
+      height: 350px;
+    }
+  }
+
+  &__spinner {
+    position: absolute;
+    top: calc(50% - 70px / 2);
+    left: calc(50% - 70px / 2);
+  }
+
+  &__img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+
+    &--hidden {
+      display: none;
+    }
+  }
+  
+  &__manufacturer {
+    font-size: 1.2rem;
+  }
+
+  &__model {
+    color: $accent;
+    margin-bottom: 4px;
+  }
+
+  &__country {
+    font-size: .9rem;
+    margin-bottom: 24px;
+  }
+
+  &__warranty {
+    margin-bottom: 24px;
+  }
+
+  &__description {
+    margin-bottom: 24px;
+    padding: 8px;
+    background-color: rgba($accent, .08);
+    border-left: 5px solid $accent;
+    border-radius: 3px 8px 8px 3px;
+  }
+
+  &__btn {
+    align-self: flex-end;
+  }
+}

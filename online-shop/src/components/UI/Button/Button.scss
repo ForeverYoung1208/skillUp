@@ -1,0 +1,40 @@
+@import '../../../variables';
+
+.button {
+  border: none;
+  font-size: 1rem;
+  color: #fff;
+  background-color: $accent;
+  border-radius: 5px;
+  padding: 10px 25px;
+  box-shadow: 0 5px 15px rgba($accent, .2);
+  cursor: pointer;
+  transition: background-color 300ms ease;
+
+  &:hover {
+    background-color: darken($accent, 8%);
+  }
+
+  &--alt {
+    border: 2px solid $accent;
+    background-color: transparent;
+    color: $accent;
+    box-shadow: none;
+    font-weight: 600;
+    border-radius: 3px;
+    transition:
+      border-color 300ms ease,
+      color 300ms ease;
+
+    &:hover {
+      background-color: transparent;
+      border-color: darken($accent, 8%);
+      color: darken($accent, 8%);
+    }
+  }
+
+  &:disabled {
+    background-color: rgba(#ccc, .7);
+    cursor: not-allowed;
+  }
+}

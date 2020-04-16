@@ -1,0 +1,15 @@
+@import '../../../variables.scss';
+
+.cart {
+  &__td {
+    padding: 15px 20px;
+    text-align: center;
+    border-bottom: 1px solid $lightgrey;
+  }
+
+  &__img {
+    width: 150px;
+    height: 100px;
+    object-fit: contain;
+  }
+}

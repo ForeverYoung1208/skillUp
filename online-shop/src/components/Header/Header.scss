@@ -1,0 +1,17 @@
+@import '../../variables';
+
+.header {
+  background-color: #fff;
+  padding: 20px;
+
+  &__wrapper {
+    @extend %wrapper;
+    display: flex;
+    flex-direction: column;
+    
+    @include media(576px) {
+      flex-direction: row;
+      justify-content: space-between;
+    }
+  }
+}

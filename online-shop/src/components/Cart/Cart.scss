@@ -1,0 +1,22 @@
+@import '../../variables.scss';
+
+.cart {
+  &__table {
+    width: 100%;
+    border-spacing: 0;
+  }
+
+  &__th {
+    padding: 15px 20px;
+    background-color: $accent;
+    color: #fff;
+
+    &:first-child {
+      border-radius: 8px 0 0 0;
+    }
+
+    &:last-child {
+      border-radius: 0 8px 0 0;
+    }
+  }
+}

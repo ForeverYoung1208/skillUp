@@ -1,0 +1,32 @@
+@import '../../variables.scss';
+
+.search {
+  position: relative;
+  width: 100%;
+
+  @include media(576px) {
+    width: auto;
+  }
+
+  &__input {
+    padding-right: 35px;
+    min-width: 200px;
+    width: 100%;
+
+    @include media(576px) {
+      min-width: 300px;
+    }
+  }
+
+  &__icon {
+    position: absolute;
+    top: calc(50% - 1rem / 2);
+    right: 10px;
+    color: $lightgrey;
+    transition: color 150ms ease;
+
+    &--focused {
+      color: $accent;
+    }
+  }
+}

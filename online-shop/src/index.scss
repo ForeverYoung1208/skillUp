@@ -1,0 +1,17 @@
+@import './variables';
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+
+  &::before,
+  &::after {
+    @extend *;
+  }
+}
+
+html {
+  font-family: $font;
+  color: $black;
+}

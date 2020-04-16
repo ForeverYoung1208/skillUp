@@ -1,0 +1,44 @@
+@import '../../variables.scss';
+
+.logo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+
+  @include media(576px) {
+    justify-content: flex-start;
+    margin-bottom: 0;
+  }
+
+  &__img-wrapper {
+    width: 80px;
+    background-color: #fff;
+    border-radius: 50%;
+    padding: 8px;
+    display: flex;
+    box-sizing: border-box;
+    border: 2px solid $accent;
+    margin-right: 15px;
+    
+    @include media(576px) {
+      box-sizing: content-box;
+    }
+  }
+
+  &__img {
+    width: 90%;
+    height: 90%;
+    object-fit: cover;
+    margin: auto;
+  }
+
+  &__title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    
+    @include media(576px) {
+      font-size: 1.4rem;
+    }
+  }
+}

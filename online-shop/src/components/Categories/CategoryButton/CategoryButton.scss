@@ -1,0 +1,47 @@
+@import '../../../variables.scss';
+
+.category-btn {
+  padding: 10px 20px;
+  text-align: center;
+  border-radius: 4px;
+  cursor: pointer;
+  border: 2px solid $lightgrey;
+  font-size: .9rem;
+  font-weight: 600;
+  color: $accent;
+  user-select: none;
+  margin-bottom: 4px;
+  transition:
+    background-color 300ms ease,
+    border-color 300ms ease,
+    color 300ms ease;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  @include media(576px) {
+    width: calc(100% / 3);
+    margin-right: 4px;
+    margin-bottom: 0;
+
+    &:last-child {
+      margin-right: 0;
+    }
+  }
+
+  &--active {
+    border-color: $accent;
+    background-color: $accent;
+    color: #fff;
+    cursor: default;
+  }
+
+  &:hover {
+    border-color: $accent;
+  }
+
+  &__text {
+    text-transform: uppercase;
+  }
+}

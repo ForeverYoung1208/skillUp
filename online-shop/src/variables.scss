@@ -1,0 +1,20 @@
+// colors
+$accent: #0075fb;
+$lightgrey: #f0f0f4;
+$black: #1f1f1f;
+
+// fonts
+$font: 'Quicksand', sans-serif;
+
+// mixin
+@mixin media($size) {
+  @media (min-width: $size) {
+    @content;
+  }
+}
+
+// placeholders
+%wrapper {
+  max-width: 1400px;
+  margin: 0 auto;
+}
