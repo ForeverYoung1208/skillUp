@@ -7,12 +7,14 @@ class Profile {
     constructor(userName) {
         this.profile = document.createElement('div');
 
+        this.cartItemsCount = JSON.parse(localStorage.getItem('cart-products')).length;
         this.profile.className = 'profile';
         this.profile.innerHTML = `
             <h1 class="profile__username">${userName}</h1>
 
             <div class="profile__icon-wrapper">
-                <i class="fas fa-cart-arrow-down profile__icon"></i>
+                <i class="fas fa-cart-arrow-down profile__icon"></i> 
+                <span class="profile__cart-counter">${this.cartItemsCount}</span>
             </div>
         `;
 
@@ -48,6 +50,14 @@ class Profile {
         backdrop.remove();
         modal.remove();
     }
+    
+
+    static updateCartItemsCount(newCount) {
+        newCount || (newCount = JSON.parse(localStorage.getItem('cart-products')).length);
+        
+        const cartCounter = document.querySelector('.profile__cart-counter');
+        cartCounter.textContent = newCount;
+    };
 }
 
 export default Profile;

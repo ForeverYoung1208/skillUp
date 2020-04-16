@@ -1,6 +1,9 @@
 import Product from './Product/Product';
 import Categories from '../Categories/Categories';
 import Pagination from '../Pagination/Pagination';
+
+import Profile from '../Profile/Profile';
+
 import productsData from '../../assets/database/products';
 import './Products.scss';
 
@@ -49,6 +52,9 @@ class Products {
         const btn = e.target;
 
         if (!btn.classList.contains('product__btn')) return;
+
+        Profile.updateCartItemsCount();
+
 
         const productId = +btn.parentElement.dataset.id;
 
