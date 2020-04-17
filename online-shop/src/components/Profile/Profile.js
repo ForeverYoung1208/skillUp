@@ -6,8 +6,10 @@ import './Profile.scss';
 class Profile {
     constructor(userName) {
         this.profile = document.createElement('div');
-
-        this.cartItemsCount = JSON.parse(localStorage.getItem('cart-products')).length;
+        
+        JSON.parse(localStorage.getItem('cart-products')) 
+            ? this.cartItemsCount = JSON.parse(localStorage.getItem('cart-products')).length
+            : this.cartItemsCount = ''
         this.profile.className = 'profile';
         this.profile.innerHTML = `
             <h1 class="profile__username">${userName}</h1>

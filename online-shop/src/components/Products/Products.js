@@ -53,21 +53,18 @@ class Products {
 
         if (!btn.classList.contains('product__btn')) return;
 
-        Profile.updateCartItemsCount();
-
-
-        const productId = +btn.parentElement.dataset.id;
+        let newCartProducts = [+btn.parentElement.dataset.id];
 
         const cartProductsFromStorage = localStorage.getItem('cart-products');
 
         if (cartProductsFromStorage) {
             const parsedProducts = JSON.parse(cartProductsFromStorage);
-            const newCartProducts = parsedProducts.concat(productId); // [...parsedProducts, id]
+            newCartProducts = parsedProducts.concat(newCartProducts); // [...parsedProducts, id]
 
-            return localStorage.setItem('cart-products', JSON.stringify(newCartProducts));
         }
 
-        localStorage.setItem('cart-products', JSON.stringify([productId]));
+        localStorage.setItem('cart-products', JSON.stringify(newCartProducts));
+        Profile.updateCartItemsCount();
     }
 }
 
