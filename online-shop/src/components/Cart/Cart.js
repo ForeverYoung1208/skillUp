@@ -1,4 +1,6 @@
 import CartProduct from './CartProduct/CartProduct';
+import Button from '../UI/Button/Button';
+
 import productsData from '../../assets/database/products.json';
 import './Cart.scss';
 
@@ -27,6 +29,9 @@ class Cart {
                         <td colspan="5" class="cart__td">Total</td>
                         <td class="cart__td cart__total"></td>
                     </tr>
+                    <tr>
+                        <td colspan='6' class='cart__td-submit'></td>
+                    </tr>
                 </tfoot>
             </table>
         `;
@@ -45,6 +50,9 @@ class Cart {
 
         tbody.append(...cartProducts);
         cartTotal.textContent = `$${total}`;
+
+        const tdSubmit = this.cart.querySelector('.cart__td-submit')
+        tdSubmit.append(new Button({text: 'Checkout'}))
 
         return this.cart;
     }
