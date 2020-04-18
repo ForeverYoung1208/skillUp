@@ -20,12 +20,12 @@ class Profile {
             </div>
         `;
 
-        this.profile.addEventListener('click', this.openCartHandler.bind(this));
+        this.profile.addEventListener('click', Profile.openCartHandler.bind(this));
 
         return this.profile;
     }
 
-    openCartHandler(e) {
+    static openCartHandler(e) {
         const cartIcon = e.target.closest('.profile__icon-wrapper');
 
         if (!cartIcon) return;
@@ -35,14 +35,14 @@ class Profile {
         document.body.style.overflowY = 'hidden';
         document.body.style.paddingRight = `${shift}px`;
 
-        const backdrop = new Backdrop(this.closeCartHandler);
-        const cart = new Cart(this.closeCartHandler);
+        const backdrop = new Backdrop(Profile.closeCartHandler);
+        const cart = new Cart(Profile.closeCartHandler);
         const modal = new Modal(cart, 'profile__modal');
 
         document.getElementById('modal-root').append(backdrop, modal);
     }
 
-    closeCartHandler() {
+    static closeCartHandler() {
         document.body.style.overflowY = '';
         document.body.style.paddingRight = '';
 

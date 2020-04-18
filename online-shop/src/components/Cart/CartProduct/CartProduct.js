@@ -31,7 +31,6 @@ class CartProduct {
             <td><i class="fas fa-trash cart__controls cart__trash-btn"></i></td>
         `;
         const quantityNode = this.cartProduct.querySelector('.cart__tr-quantity')
-        console.log('[quantityNode]', quantityNode);
         const plus = quantityNode.nextElementSibling;
         const minus = quantityNode.previousElementSibling;
         const trash = this.cartProduct.querySelector('.cart__trash-btn')
@@ -86,7 +85,10 @@ class CartProduct {
             localStorage.setItem('cart-products', JSON.stringify(newProducts));
 
             this.animateClick(cartProduct, ()=> {
-                
+                Profile.closeCartHandler();
+                const trash = document.querySelector('.profile__icon-wrapper')
+                trash.click();
+
             });
         }
     }
