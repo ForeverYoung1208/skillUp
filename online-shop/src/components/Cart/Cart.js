@@ -1,5 +1,9 @@
 import CartProduct from './CartProduct/CartProduct';
 import Button from '../UI/Button/Button';
+import Backdrop from "../UI/Backdrop/Backdrop";
+import Modal from '../UI/Modal/Modal';
+import Checkout from './Checkout/Checkout';
+import Profile from '../Profile/Profile';
 
 import productsData from '../../assets/database/products.json';
 import './Cart.scss';
@@ -54,7 +58,9 @@ class Cart {
         cartTotal.textContent = `$${total}`;
 
         const tdSubmit = this.cart.querySelector('.cart__td-submit')
-        tdSubmit.append(new Button({text: 'Checkout'}))
+        this.checkoutButton = new Button({text: 'Checkout'})
+        this.checkoutButton.addEventListener('click', this.checkoutClickHandler)
+        tdSubmit.append(this.checkoutButton)
 
         return this.cart;
     }
@@ -89,6 +95,22 @@ class Cart {
         }, []);
     }
 
+    checkoutClickHandler(){
+
+        const backdrop = new Backdrop(Cart.closeCheckoutHandler);
+        const modal = new Modal(new Checkout(), 'custom__class');
+        document.getElementById('modal-root').append(backdrop, modal);        
+        
+        Profile.closeCartHandler();
+    }
+
+    static closeCheckoutHandler() {
+
+        document.querySelector('#modal-root .modal:last-of-type').remove()
+        document.querySelector('#modal-root .backdrop:last-of-type').remove()
+    }
+
+
     static recalculateTotal(){
         const totalInCart = document.querySelector('.cart__total')
         const productIds = JSON.parse(localStorage.getItem('cart-products'));
@@ -99,6 +121,7 @@ class Cart {
         },0)
 
         totalInCart.textContent = '$'+total;
+        return total;
     }
 }
 
