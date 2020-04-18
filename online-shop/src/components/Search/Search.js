@@ -1,4 +1,6 @@
 import Input from '../UI/Input/Input';
+import Pagination from '../Pagination/Pagination';
+import Products from '../Products/Products';
 import './Search.scss';
 
 class Search {
@@ -19,6 +21,7 @@ class Search {
 
         this.input.addEventListener('focus', this.onFocusHandler.bind(this));
         this.input.addEventListener('blur', this.onBlurHandler.bind(this));
+        this.input.addEventListener('keyup', this.onKeyUpHandler.bind(this))
 
         return this.search;
     }
@@ -29,6 +32,16 @@ class Search {
 
     onBlurHandler() {
         this.icon.classList.remove('search__icon--focused');
+    }
+
+    onKeyUpHandler(){
+        // const pattern = e.target.value
+        window.inputTimeout ? clearTimeout(window.inputTimeout) : null
+        window.inputTimeout = setTimeout( ()=>{
+            Pagination.render(null, true);
+            Products.render();
+        },500)        
+
     }
 }
 

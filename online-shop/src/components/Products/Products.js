@@ -20,17 +20,34 @@ class Products {
         return this.products;
     }
 
-    static filter() {
+    static filter(pattern) {
         const activeCategory = Categories.getActiveCategory();
 
         const filteredProducts = productsData.filter(({ category }) => {
             return category.toLowerCase() === activeCategory;
         });
 
-        return filteredProducts;
+        const searchInput = document.querySelector('.search__input')
+        if (!searchInput || !searchInput.value) return filteredProducts
+
+        const regPattern = new RegExp(searchInput.value,'i')
+
+        const filteredByPatternProducts = filteredProducts.filter((product) => {
+            const { category, model, manufacturer, country } = product
+
+            if (regPattern.test(category) || regPattern.test(model) ||
+            regPattern.test(manufacturer) || regPattern.test(country)) {
+                return true;
+            }
+            return false;
+        });
+
+        return filteredByPatternProducts
     }
 
+
     static render(location) {
+
         const filteredProducts = Products.filter();
         const activePageNumber = Pagination.getActivePage();
 
