@@ -1,5 +1,6 @@
 import './CartProduct.scss';
 import Profile from '../../Profile/Profile';
+import Cart from '../Cart';
 
 class CartProduct {
     constructor({
@@ -12,6 +13,7 @@ class CartProduct {
     }) {
         this.cartProduct = document.createElement('tr');
         this.cartProduct.dataset.id = id
+        this.cartProduct.dataset.price = price
         this.cartProduct.className = 'cart__tr'
 
         this.cartProduct.innerHTML = `
@@ -27,8 +29,8 @@ class CartProduct {
                     <span class='cart__tr-quantity'>${quantity}</span>
                 <i class="far fa-plus-square cart__controls"></i>
             </td>
-            <td class="cart__td">$${total}</td>
-            <td><i class="fas fa-trash cart__controls cart__trash-btn"></i></td>
+            <td class="cart__td cart__totalItem">$${total}</td>
+            <td class="cart__td"><i class="fas fa-trash cart__controls cart__trash-btn"></i></td>
         `;
         const quantityNode = this.cartProduct.querySelector('.cart__tr-quantity')
         const plus = quantityNode.nextElementSibling;
@@ -43,10 +45,12 @@ class CartProduct {
     }
 
     plusMinusHandler(e, sign){
-        const cartTr = e.target.closest('.cart__tr');
-        const quantity = cartTr.querySelector('.cart__tr-quantity')
+        const cartTrElement = e.target.closest('.cart__tr');
+        const quantityElement = cartTrElement.querySelector('.cart__tr-quantity')
+        const totalItemElement = cartTrElement.querySelector('.cart__totalItem')
 
-        const id = +cartTr.dataset.id
+        const id = +cartTrElement.dataset.id
+        const price = +cartTrElement.dataset.price
         const productsFromStorage = JSON.parse(localStorage.getItem('cart-products'));
         let newProducts = [];
 
@@ -55,16 +59,19 @@ class CartProduct {
         switch (sign) {
             case 'plus':
                 newProducts = [...productsFromStorage, id]
-                quantity.textContent = +quantity.textContent+1
+                quantityElement.textContent = +quantityElement.textContent + 1
+                totalItemElement.textContent = '$' + (parseFloat(totalItemElement.textContent.substr(1)) + price)
                 break;
             case 'minus':
                 const index = productsFromStorage.indexOf(id)
                 if (index>=0){
                     productsFromStorage.splice(index,1)
                     newProducts = productsFromStorage
-                    quantity.textContent = +quantity.textContent-1
+                    quantityElement.textContent = +quantityElement.textContent - 1
+                    totalItemElement.textContent = '$' + (parseFloat(totalItemElement.textContent.substr(1)) - price)
                 } else {
                     console.log('not found any more')
+                    return;
                 }
                 break;
             default:
@@ -72,6 +79,8 @@ class CartProduct {
         }
 
         localStorage.setItem('cart-products', JSON.stringify(newProducts));
+
+        Cart.recalculateTotal();
         Profile.updateCartItemsCount();
     }
 
@@ -86,9 +95,7 @@ class CartProduct {
 
             this.animateClick(cartProduct, ()=> {
                 Profile.closeCartHandler();
-                const trash = document.querySelector('.profile__icon-wrapper')
-                trash.click();
-
+                Profile.openCart();
             });
         }
     }

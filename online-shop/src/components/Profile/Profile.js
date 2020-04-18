@@ -25,22 +25,12 @@ class Profile {
         return this.profile;
     }
 
+
     static openCartHandler(e) {
         const cartIcon = e.target.closest('.profile__icon-wrapper');
-
         if (!cartIcon) return;
-
-        const shift = window.innerWidth - document.body.clientWidth;
-
-        document.body.style.overflowY = 'hidden';
-        document.body.style.paddingRight = `${shift}px`;
-
-        const backdrop = new Backdrop(Profile.closeCartHandler);
-        const cart = new Cart(Profile.closeCartHandler);
-        const modal = new Modal(cart, 'profile__modal');
-
-        document.getElementById('modal-root').append(backdrop, modal);
-    }
+        this.constructor.openCart();
+    }    
 
     static closeCartHandler() {
         document.body.style.overflowY = '';
@@ -52,7 +42,19 @@ class Profile {
         backdrop.remove();
         modal.remove();
     }
-    
+
+    static openCart() {
+        const shift = window.innerWidth - document.body.clientWidth;
+
+        document.body.style.overflowY = 'hidden';
+        document.body.style.paddingRight = `${shift}px`;
+
+        const backdrop = new Backdrop(Profile.closeCartHandler);
+        const cart = new Cart(Profile.closeCartHandler);
+        const modal = new Modal(cart, 'profile__modal');
+
+        document.getElementById('modal-root').append(backdrop, modal);
+    }
 
     static updateCartItemsCount(newCount) {
         newCount || (newCount = JSON.parse(localStorage.getItem('cart-products')).length);

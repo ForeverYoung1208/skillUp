@@ -13,9 +13,12 @@
     object-fit: contain;
   }
 
+  &__tr-quantity{
+    margin: 0 7px 0 7px;
+  }
+
   &__controls{
     display: inline-block;
-    margin: 0 1rem 0 1rem;
     color: $accent;
     &:hover{
       cursor: pointer;

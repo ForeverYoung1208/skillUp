@@ -88,6 +88,18 @@ class Cart {
             return result;
         }, []);
     }
+
+    static recalculateTotal(){
+        const totalInCart = document.querySelector('.cart__total')
+        const productIds = JSON.parse(localStorage.getItem('cart-products'));
+
+        const total = productIds.reduce((t, productId) => {
+            t += productsData.find(({ id }) => id === productId).price;
+            return t
+        },0)
+
+        totalInCart.textContent = '$'+total;
+    }
 }
 
 export default Cart;
