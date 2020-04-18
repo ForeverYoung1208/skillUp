@@ -19,6 +19,7 @@ class Cart {
                         <th class="cart__th">Price</th>
                         <th class="cart__th">Quantity</th>
                         <th class="cart__th">Total</th>
+                        <th class="cart__th"></th>
                     </tr>
                 </thead>
 
@@ -28,9 +29,10 @@ class Cart {
                     <tr>
                         <td colspan="5" class="cart__td">Total</td>
                         <td class="cart__td cart__total"></td>
+                        <td class="cart__td"></td>
                     </tr>
                     <tr>
-                        <td colspan='6' class='cart__td-submit'></td>
+                        <td colspan='7' class='cart__td-submit'></td>
                     </tr>
                 </tfoot>
             </table>

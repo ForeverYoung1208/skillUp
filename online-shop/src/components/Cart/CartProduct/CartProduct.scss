@@ -13,14 +13,20 @@
     object-fit: contain;
   }
 
-  &__minus, &__plus{
+  &__controls{
     display: inline-block;
     margin: 0 1rem 0 1rem;
+    color: $accent;
     &:hover{
       cursor: pointer;
-      color: $accent;
-      text-shadow: 0 0 5px rgba($accent, 0.3);
-      transition: color 200ms;
+      color: darken($accent,8%);
+      text-shadow: 0 0 15px rgba($accent, 0.5);
+      transition: all 200ms;
+    }
+    &--clicked{
+      color: $accent !important;
+      text-shadow: 0 0 30px rgba($accent, 1) !important;
+      transition: all 200ms;
     }
   }
 }
